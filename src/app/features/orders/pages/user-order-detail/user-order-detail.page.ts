@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { RequestService } from '../../../../core/services/request.service';
 import { ToastService } from '../../../../core/services/toast.service';
-import { Request } from '../../../../core/models';
+import { Request, RequestStatus } from '../../../../core/models';
 
 @Component({
   selector: 'app-user-order-detail',
@@ -70,8 +70,8 @@ export class UserOrderDetailPage implements OnInit {
     }
   }
 
-  getStatusText(status: string): string {
-    const statusTexts: { [key: string]: string } = {
+  getStatusText(status: RequestStatus): string {
+    const statusTexts: Record<RequestStatus, string> = {
       'OPEN': 'Abierta',
       'ACCEPTED': 'Aceptada',
       'IN_PROGRESS': 'En preparación',
@@ -80,11 +80,11 @@ export class UserOrderDetailPage implements OnInit {
       'CANCELLED': 'Cancelada',
       'EXPIRED': 'Expirada'
     };
-    return statusTexts[status] || status;
+    return statusTexts[status];
   }
 
-  getStatusColor(status: string): string {
-    const colors: { [key: string]: string } = {
+  getStatusColor(status: RequestStatus): string {
+    const colors: Record<RequestStatus, string> = {
       'OPEN': 'primary',
       'ACCEPTED': 'secondary',
       'IN_PROGRESS': 'warning',
@@ -93,11 +93,11 @@ export class UserOrderDetailPage implements OnInit {
       'CANCELLED': 'danger',
       'EXPIRED': 'dark'
     };
-    return colors[status] || 'medium';
+    return colors[status];
   }
 
-  getStatusIcon(status: string): string {
-    const icons: { [key: string]: string } = {
+  getStatusIcon(status: RequestStatus): string {
+    const icons: Record<RequestStatus, string> = {
       'OPEN': 'search',
       'ACCEPTED': 'checkmark-circle',
       'IN_PROGRESS': 'restaurant',
@@ -106,13 +106,13 @@ export class UserOrderDetailPage implements OnInit {
       'CANCELLED': 'close-circle',
       'EXPIRED': 'time'
     };
-    return icons[status] || 'help';
+    return icons[status];
   }
 
-  isStatusActive(status: string): boolean {
+  isStatusActive(status: RequestStatus): boolean {
     if (!this.request) return false;
 
-    const statusOrder = ['OPEN', 'ACCEPTED', 'IN_PROGRESS', 'READY', 'COMPLETED'];
+    const statusOrder: RequestStatus[] = ['OPEN', 'ACCEPTED', 'IN_PROGRESS', 'READY', 'COMPLETED'];
     const currentIndex = statusOrder.indexOf(this.request.status);
     const checkIndex = statusOrder.indexOf(status);
 

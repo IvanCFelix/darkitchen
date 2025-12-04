@@ -156,6 +156,15 @@ export class HomePage implements OnInit {
     filterRequests(): void {
         let filtered = this.requests;
 
+        // Filter out expired requests in darkitchen mode
+        if (this.appModeService.isDarkitchenMode) {
+            const now = new Date().getTime();
+            filtered = filtered.filter(request => {
+                const expiresAt = request.expiresAt.toMillis();
+                return expiresAt > now && request.status !== 'EXPIRED';
+            });
+        }
+
         // Filter by search term
         if (this.searchTerm.trim()) {
             const term = this.searchTerm.toLowerCase();
@@ -178,6 +187,7 @@ export class HomePage implements OnInit {
     }
 
     onAcceptRequest(request: Request): void {
+
         console.log('Accept request:', request);
         // Aquí se puede navegar a una página de detalles o mostrar un modal
     }
@@ -188,5 +198,10 @@ export class HomePage implements OnInit {
 
     navigateToOrders(): void {
         this.router.navigate(['/orders']);
+    }
+
+    navigateToRequest(): void {
+
+        this.router.navigateByUrl('/requests/create');
     }
 }

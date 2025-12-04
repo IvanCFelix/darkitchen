@@ -31,7 +31,7 @@
 
         <!-- Create Request Button - Solo modo usuario -->
         <div class="create-request-section" *ngIf="appModeService.isUserMode">
-            <ion-button expand="block" class="create-request-btn" routerLink="/requests/create">
+            <ion-button expand="block" class="create-request-btn" (click)="navigateToRequest()">
                 <ion-icon name="add-circle" slot="start"></ion-icon>
                 Crear solicitud de platillo
             </ion-button>
@@ -93,7 +93,6 @@
         <!-- Requests List - Solo modo darkitchen -->
         <div class="requests-list" *ngIf="appModeService.isDarkitchenMode">
             <app-request-card *ngFor="let request of filteredRequests" [request]="request" [showAcceptButton]="true"
-                acceptButtonText="Aceptar Solicitud" (cardClick)="viewRequestDetail($event)"
                 (acceptClick)="onAcceptRequest($event)">
             </app-request-card>
         </div>

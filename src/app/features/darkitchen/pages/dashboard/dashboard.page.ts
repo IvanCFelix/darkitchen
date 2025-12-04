@@ -27,6 +27,9 @@ export class DashboardPage implements OnInit {
   activeOrders: Order[] = [];
   isLoading = true;
 
+  // Slider state
+  private sliderStates: Map<string, { startX: number; isDragging: boolean }> = new Map();
+
   async ngOnInit(): Promise<void> {
     const userId = this.authService.getCurrentUserId();
     if (!userId) {
@@ -37,7 +40,7 @@ export class DashboardPage implements OnInit {
 
     try {
       this.myDarkitchens = await this.darkitchenService.getDarkitchensByOwner(userId).toPromise() || [];
-      
+
       if (this.myDarkitchens.length === 0) {
         this.toastService.showInfo('Crea tu primera Darkitchen');
         this.router.navigate(['/darkitchen/create']);
@@ -56,7 +59,7 @@ export class DashboardPage implements OnInit {
 
   async loadOrders(): Promise<void> {
     if (!this.selectedDarkitchen) return;
-    
+
     try {
       this.activeOrders = await this.orderService.getActiveOrdersForDarkitchen(this.selectedDarkitchen.id).toPromise() || [];
     } catch (error) {
@@ -117,5 +120,79 @@ export class DashboardPage implements OnInit {
 
   navigateToSearchRequests(): void {
     this.router.navigate(['/requests/search']);
+  }
+
+  // Slider methods
+  onSlideStart(event: any, orderId: string): void {
+    const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+    this.sliderStates.set(orderId, { startX: clientX, isDragging: true });
+  }
+
+  onSlideMove(event: any, orderId: string): void {
+    const state = this.sliderStates.get(orderId);
+    if (!state || !state.isDragging) return;
+
+    const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+    const slider = document.getElementById(`slider-${orderId}`);
+    const track = document.getElementById(`track-${orderId}`);
+
+    if (!slider || !track) return;
+
+    const trackRect = track.getBoundingClientRect();
+    const maxDistance = trackRect.width - 60; // 60px es el ancho del botón
+    let distance = clientX - state.startX;
+
+    // Limitar el movimiento
+    distance = Math.max(0, Math.min(distance, maxDistance));
+
+    slider.style.transform = `translateX(${distance}px)`;
+
+    // Cambiar opacidad del texto basado en el progreso
+    const progress = distance / maxDistance;
+    const textElement = track.querySelector('.slide-text') as HTMLElement;
+    if (textElement) {
+      textElement.style.opacity = (1 - progress * 0.7).toString();
+    }
+  }
+
+  onSlideEnd(event: any, orderId: string, newStatus: OrderStatus): void {
+    const state = this.sliderStates.get(orderId);
+    if (!state || !state.isDragging) return;
+
+    const clientX = event.changedTouches ? event.changedTouches[0].clientX : event.clientX;
+    const slider = document.getElementById(`slider-${orderId}`);
+    const track = document.getElementById(`track-${orderId}`);
+
+    if (!slider || !track) return;
+
+    const trackRect = track.getBoundingClientRect();
+    const maxDistance = trackRect.width - 60;
+    const distance = clientX - state.startX;
+    const progress = distance / maxDistance;
+
+    // Si llegó al menos al 80%, confirmar acción
+    if (progress >= 0.8) {
+      slider.style.transition = 'transform 0.3s ease';
+      slider.style.transform = `translateX(${maxDistance}px)`;
+
+      setTimeout(() => {
+        this.updateOrderStatus(orderId, newStatus);
+      }, 300);
+    } else {
+      // Regresar a la posición inicial
+      slider.style.transition = 'transform 0.3s ease';
+      slider.style.transform = 'translateX(0)';
+
+      const textElement = track.querySelector('.slide-text') as HTMLElement;
+      if (textElement) {
+        textElement.style.opacity = '1';
+      }
+
+      setTimeout(() => {
+        slider.style.transition = '';
+      }, 300);
+    }
+
+    this.sliderStates.set(orderId, { ...state, isDragging: false });
   }
 }

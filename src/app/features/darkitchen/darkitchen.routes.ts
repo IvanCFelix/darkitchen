@@ -10,6 +10,10 @@ export const DARKITCHEN_ROUTES: Routes = [
     loadComponent: () => import('./pages/dishes/dishes.page').then(m => m.DishesPage)
   },
   {
+    path: 'dishes/create',
+    loadComponent: () => import('./pages/create-dish/create-dish.page').then(m => m.CreateDishPage)
+  },
+  {
     path: 'create',
     loadComponent: () => import('./pages/create-darkitchen/create-darkitchen.page').then(m => m.CreateDarkitchenPage)
   }

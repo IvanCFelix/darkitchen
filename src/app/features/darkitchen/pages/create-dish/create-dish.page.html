@@ -1,0 +1,205 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/darkitchen/dishes"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Nuevo Platillo</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <div class="create-dish-container">
+        <form [formGroup]="dishForm" (ngSubmit)="onSubmit()">
+
+            <!-- Photo Upload Section -->
+            <div class="photo-section">
+                <h2>Fotos del Platillo</h2>
+                <p class="section-subtitle">Agrega hasta 5 imágenes</p>
+
+                <div class="photos-grid">
+                    <div class="photo-item" *ngFor="let photo of photos; let i = index">
+                        <img [src]="photo" [alt]="'Foto ' + (i + 1)">
+                        <ion-button class="remove-photo" fill="clear" (click)="removePhoto(i)">
+                            <ion-icon name="close-circle" color="danger"></ion-icon>
+                        </ion-button>
+                    </div>
+
+                    <div class="photo-placeholder" *ngIf="photos.length < 5" (click)="fileInput.click()">
+                        <ion-icon name="camera-outline"></ion-icon>
+                        <span>Agregar foto</span>
+                    </div>
+                </div>
+
+                <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" style="display: none;">
+            </div>
+
+            <!-- Basic Information -->
+            <div class="form-section">
+                <h2>Información Básica</h2>
+
+                <ion-item class="custom-item">
+                    <ion-label position="stacked">Nombre del Platillo *</ion-label>
+                    <ion-input formControlName="name" placeholder="Ej: Pizza Margarita"></ion-input>
+                </ion-item>
+                <div class="error-message" *ngIf="dishForm.get('name')?.invalid && dishForm.get('name')?.touched">
+                    El nombre es requerido
+                </div>
+
+                <ion-item class="custom-item">
+                    <ion-label position="stacked">Descripción *</ion-label>
+                    <ion-textarea formControlName="description" placeholder="Describe tu platillo..."
+                        rows="4"></ion-textarea>
+                </ion-item>
+                <div class="error-message"
+                    *ngIf="dishForm.get('description')?.invalid && dishForm.get('description')?.touched">
+                    La descripción es requerida
+                </div>
+
+                <div class="two-columns">
+                    <div>
+                        <ion-item class="custom-item">
+                            <ion-label position="stacked">Precio *</ion-label>
+                            <ion-input formControlName="price" type="number" placeholder="0.00">
+                                <span slot="start">$</span>
+                            </ion-input>
+                        </ion-item>
+                        <div class="error-message"
+                            *ngIf="dishForm.get('price')?.invalid && dishForm.get('price')?.touched">
+                            Precio inválido
+                        </div>
+                    </div>
+
+                    <div>
+                        <ion-item class="custom-item">
+                            <ion-label position="stacked">Tiempo de preparación *</ion-label>
+                            <ion-input formControlName="preparationTime" type="number" placeholder="30">
+                                <span slot="end">min</span>
+                            </ion-input>
+                        </ion-item>
+                        <div class="error-message"
+                            *ngIf="dishForm.get('preparationTime')?.invalid && dishForm.get('preparationTime')?.touched">
+                            Tiempo inválido
+                        </div>
+                    </div>
+                </div>
+
+                <ion-item class="custom-item">
+                    <ion-label position="stacked">Categoría *</ion-label>
+                    <ion-select formControlName="category" placeholder="Selecciona una categoría">
+                        <ion-select-option value="Pizza">🍕 Pizza</ion-select-option>
+                        <ion-select-option value="Burger">🍔 Burger</ion-select-option>
+                        <ion-select-option value="Sushi">🍣 Sushi</ion-select-option>
+                        <ion-select-option value="Pasta">🍝 Pasta</ion-select-option>
+                        <ion-select-option value="Tacos">🌮 Tacos</ion-select-option>
+                        <ion-select-option value="Postres">🍰 Postres</ion-select-option>
+                        <ion-select-option value="Bebidas">🥤 Bebidas</ion-select-option>
+                        <ion-select-option value="Ensaladas">🥗 Ensaladas</ion-select-option>
+                    </ion-select>
+                </ion-item>
+                <div class="error-message"
+                    *ngIf="dishForm.get('category')?.invalid && dishForm.get('category')?.touched">
+                    Selecciona una categoría
+                </div>
+
+                <ion-item class="custom-item">
+                    <ion-label position="stacked">Nombre del Restaurante</ion-label>
+                    <ion-input formControlName="restaurantName" placeholder="Ej: Mi Cocina"></ion-input>
+                </ion-item>
+            </div>
+
+            <!-- Tags Section -->
+            <div class="form-section">
+                <h2>Etiquetas</h2>
+                <p class="section-subtitle">Agrega palabras clave para facilitar la búsqueda</p>
+
+                <div class="tags-container">
+                    <ion-chip *ngFor="let tag of tags; let i = index" class="tag-chip">
+                        <ion-label>{{ tag }}</ion-label>
+                        <ion-icon name="close-circle" (click)="removeTag(i)"></ion-icon>
+                    </ion-chip>
+                </div>
+
+                <div class="tag-input-container">
+                    <ion-input #tagInput placeholder="Escribe una etiqueta y presiona Enter"
+                        (keyup.enter)="addTag(tagInput.value); tagInput.value = ''">
+                    </ion-input>
+                    <ion-button fill="clear" (click)="addTag(tagInput.value); tagInput.value = ''">
+                        <ion-icon name="add-circle" slot="icon-only"></ion-icon>
+                    </ion-button>
+                </div>
+            </div>
+
+            <!-- Options Section -->
+            <div class="form-section">
+                <h2>Opciones (Opcional)</h2>
+
+                <div class="options-subsection">
+                    <h3>Tamaños</h3>
+                    <div class="tags-container">
+                        <ion-chip *ngFor="let size of sizes; let i = index" class="tag-chip">
+                            <ion-label>{{ size }}</ion-label>
+                            <ion-icon name="close-circle" (click)="removeSize(i)"></ion-icon>
+                        </ion-chip>
+                    </div>
+                    <div class="tag-input-container">
+                        <ion-input #sizeInput placeholder="Ej: Chica, Mediana, Grande"
+                            (keyup.enter)="addSize(sizeInput.value); sizeInput.value = ''">
+                        </ion-input>
+                        <ion-button fill="clear" (click)="addSize(sizeInput.value); sizeInput.value = ''">
+                            <ion-icon name="add-circle" slot="icon-only"></ion-icon>
+                        </ion-button>
+                    </div>
+                </div>
+
+                <div class="options-subsection">
+                    <h3>Extras</h3>
+                    <div class="tags-container">
+                        <ion-chip *ngFor="let extra of extras; let i = index" class="tag-chip">
+                            <ion-label>{{ extra }}</ion-label>
+                            <ion-icon name="close-circle" (click)="removeExtra(i)"></ion-icon>
+                        </ion-chip>
+                    </div>
+                    <div class="tag-input-container">
+                        <ion-input #extraInput placeholder="Ej: Queso extra, Aguacate"
+                            (keyup.enter)="addExtra(extraInput.value); extraInput.value = ''">
+                        </ion-input>
+                        <ion-button fill="clear" (click)="addExtra(extraInput.value); extraInput.value = ''">
+                            <ion-icon name="add-circle" slot="icon-only"></ion-icon>
+                        </ion-button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Availability Toggle -->
+            <div class="form-section">
+                <ion-item class="custom-item toggle-item">
+                    <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+                    <ion-label>
+                        <h2>Disponible</h2>
+                        <p>El platillo estará visible para los usuarios</p>
+                    </ion-label>
+                    <ion-toggle formControlName="available" slot="end"></ion-toggle>
+                </ion-item>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="button-container">
+                <ion-button expand="block" type="submit" class="submit-button"
+                    [disabled]="!dishForm.valid || photos.length === 0 || isLoading">
+                    <ion-icon name="restaurant-outline" slot="start"></ion-icon>
+                    {{ isLoading ? 'Guardando...' : 'Guardar Platillo' }}
+                </ion-button>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" *ngIf="isLoading">
+        <div class="loading-content">
+            <ion-spinner name="crescent" color="warning"></ion-spinner>
+            <h3>Guardando platillo...</h3>
+            <p>Subiendo imágenes y creando el platillo</p>
+        </div>
+    </div>
+</ion-content>

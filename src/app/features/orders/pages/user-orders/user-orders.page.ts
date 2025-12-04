@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { RequestService } from '../../../../core/services/request.service';
 import { AuthService } from '../../../../core/services/auth.service';
-import { Request } from '../../../../core/models';
+import { Request, RequestStatus } from '../../../../core/models';
 
 @Component({
     selector: 'app-user-orders',
@@ -66,8 +66,8 @@ export class UserOrdersPage implements OnInit {
         return minutes.toString();
     }
 
-    getStatusText(status: string): string {
-        const statusMap: { [key: string]: string } = {
+    getStatusText(status: RequestStatus): string {
+        const statusMap: Record<RequestStatus, string> = {
             'OPEN': 'Activa',
             'ACCEPTED': 'Aceptada',
             'IN_PROGRESS': 'En preparación',
@@ -76,11 +76,11 @@ export class UserOrdersPage implements OnInit {
             'CANCELLED': 'Cancelada',
             'EXPIRED': 'Expirada'
         };
-        return statusMap[status] || status;
+        return statusMap[status];
     }
 
-    getStatusColor(status: string): string {
-        const colorMap: { [key: string]: string } = {
+    getStatusColor(status: RequestStatus): string {
+        const colorMap: Record<RequestStatus, string> = {
             'OPEN': 'primary',
             'ACCEPTED': 'secondary',
             'IN_PROGRESS': 'warning',
@@ -89,7 +89,7 @@ export class UserOrdersPage implements OnInit {
             'CANCELLED': 'danger',
             'EXPIRED': 'dark'
         };
-        return colorMap[status] || 'medium';
+        return colorMap[status];
     }
 
     wasAttended(request: Request): boolean {

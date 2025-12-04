@@ -2,11 +2,7 @@ import { Timestamp } from '@angular/fire/firestore';
 import { PaymentMethod } from './request.model';
 
 export type OrderStatus =
-    | 'PRODUCTION'
-    | 'SHIPPING'
-    | 'READY_FOR_PICKUP'
-    | 'DELIVERED'
-    | 'FINISHED';
+    'PRODUCTION' | 'SHIPPING' | 'READY_FOR_PICKUP' | 'DELIVERED' | 'FINISHED';
 
 export type DeliveryType = 'DELIVERY' | 'PICKUP';
 

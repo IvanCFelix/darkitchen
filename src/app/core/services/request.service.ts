@@ -93,7 +93,15 @@ export class RequestService {
   getAllOpenRequests(): Observable<Request[]> {
     const q = query(this.requestsCollection, where('status', '==', 'OPEN'));
     return from(getDocs(q)).pipe(
-      map(querySnapshot => querySnapshot.docs.map(doc => doc.data() as Request))
+      map(querySnapshot => {
+        const now = new Date().getTime();
+        return querySnapshot.docs
+          .map(doc => doc.data() as Request)
+          .filter(request => {
+            const expiresAt = request.expiresAt.toMillis();
+            return expiresAt > now;
+          });
+      })
     );
   }
 
