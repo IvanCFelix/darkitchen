@@ -45,20 +45,36 @@ export class DishService {
     getDish(id: string): Observable<Dish | null> {
         const dishDoc = doc(this.firestore, `dishes/${id}`);
         return from(getDoc(dishDoc)).pipe(
-            map(docSnap => docSnap.exists() ? docSnap.data() as Dish : null)
+            map(docSnap => {
+                if (!docSnap.exists()) return null;
+                return {
+                    id: docSnap.id,
+                    ...docSnap.data()
+                } as Dish;
+            })
         );
+    }
+
+    getDishById(id: string): Observable<Dish | null> {
+        return this.getDish(id);
     }
 
     getAllDishes(): Observable<Dish[]> {
         return from(getDocs(this.dishesCollection)).pipe(
-            map(querySnapshot => querySnapshot.docs.map(doc => doc.data() as Dish))
+            map(querySnapshot => querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            } as Dish)))
         );
     }
 
     getDishesByDarkitchen(darkitchenId: string): Observable<Dish[]> {
         const q = query(this.dishesCollection, where('darkitchenId', '==', darkitchenId));
         return from(getDocs(q)).pipe(
-            map(querySnapshot => querySnapshot.docs.map(doc => doc.data() as Dish))
+            map(querySnapshot => querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            } as Dish)))
         );
     }
 

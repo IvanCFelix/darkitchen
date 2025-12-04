@@ -30,6 +30,18 @@ export class RequestService {
     this.requestsCollection = collection(this.firestore, 'requests');
   }
 
+  getRequestById(requestId: string): Observable<Request | null> {
+    const requestDoc = doc(this.requestsCollection, requestId);
+    return from(getDoc(requestDoc)).pipe(
+      map(docSnap => {
+        if (docSnap.exists()) {
+          return { id: docSnap.id, ...docSnap.data() } as Request;
+        }
+        return null;
+      })
+    );
+  }
+
   createRequest(
     userId: string,
     title: string,
@@ -88,8 +100,34 @@ export class RequestService {
   getUserRequests(userId: string): Observable<Request[]> {
     const q = query(this.requestsCollection, where('userId', '==', userId));
     return from(getDocs(q)).pipe(
-      map(querySnapshot => querySnapshot.docs.map(doc => doc.data() as Request))
+      map(querySnapshot => querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }) as Request))
     );
+  }
+
+  async updateExpiredRequests(requests: Request[]): Promise<void> {
+    const now = new Date().getTime();
+    const updatePromises: Promise<void>[] = [];
+
+    for (const request of requests) {
+      if (request.status === 'OPEN' && request.expiresAt) {
+        const expiryTime = request.expiresAt.toDate ? request.expiresAt.toDate().getTime() : request.expiresAt.toDate().getTime();
+
+        if (now > expiryTime) {
+          const requestDoc = doc(this.firestore, `requests/${request.id}`);
+          updatePromises.push(
+            updateDoc(requestDoc, {
+              status: 'EXPIRED',
+              wasAttended: false
+            })
+          );
+        }
+      }
+    }
+
+    await Promise.all(updatePromises);
   }
 
   cancelRequest(requestId: string): Observable<void> {

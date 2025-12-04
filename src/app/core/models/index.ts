@@ -5,3 +5,4 @@ export * from './dish.model';
 export * from './request.model';
 export * from './order.model';
 export * from './order-status-history.model';
+export * from './card.model';

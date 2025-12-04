@@ -2,7 +2,7 @@ import { Timestamp } from '@angular/fire/firestore';
 import { Address } from './address.model';
 
 export type PaymentMethod = 'CARD' | 'CASH' | 'TRANSFER';
-export type RequestStatus = 'OPEN' | 'ACCEPTED' | 'CANCELLED' | 'EXPIRED';
+export type RequestStatus = 'OPEN' | 'ACCEPTED' | 'IN_PROGRESS' | 'READY' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED';
 
 export interface Request {
     id: string;
@@ -17,4 +17,5 @@ export interface Request {
     createdAt: Timestamp;
     acceptedByDarkitchenId?: string;
     acceptedAt?: Timestamp;
+    wasAttended?: boolean;
 }

@@ -10,7 +10,8 @@
       <ion-icon [name]="getSecondNavIcon()"></ion-icon>
     </div>
 
-    <div class="nav-item center-button" (click)="navigateTo('/requests/create')">
+    <div class="nav-item center-button" (click)="navigateTo('/requests/create')"
+      *ngIf="appModeService.isUserMode && !isOnHomePage">
       <div class="fab-circle">
         <ion-icon name="add"></ion-icon>
       </div>

@@ -2,7 +2,11 @@ import { Routes } from '@angular/router';
 
 export const ORDERS_ROUTES: Routes = [
   {
-    path: 'user/:id',
+    path: '',
+    loadComponent: () => import('./pages/user-orders/user-orders.page').then(m => m.UserOrdersPage)
+  },
+  {
+    path: 'user-detail/:id',
     loadComponent: () => import('./pages/user-order-detail/user-order-detail.page').then(m => m.UserOrderDetailPage)
   },
   {

@@ -19,6 +19,16 @@ export const routes: Routes = [
         loadComponent: () => import('./features/home/pages/home.page').then(m => m.HomePage)
     },
     {
+        path: 'dish/:id',
+        canActivate: [authGuard],
+        loadComponent: () => import('./features/home/pages/dish-detail/dish-detail.page').then(m => m.DishDetailPage)
+    },
+    {
+        path: 'cart',
+        canActivate: [authGuard],
+        loadChildren: () => import('./features/cart/cart.routes').then(m => m.routes)
+    },
+    {
         path: 'requests',
         canActivate: [authGuard],
         loadChildren: () => import('./features/requests/requests.routes').then(m => m.REQUESTS_ROUTES)

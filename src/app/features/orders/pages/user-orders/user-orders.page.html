@@ -1,0 +1,122 @@
+<ion-header [translucent]="true">
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-button (click)="goBack()" class="back-button">
+                <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>Mis Solicitudes</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+    <div class="orders-container" *ngIf="!isLoading">
+        <!-- Active Request Hero Card -->
+        <div class="active-section" *ngIf="activeRequest">
+            <div class="section-header">
+                <h2>Activa</h2>
+                <ion-badge class="status-badge active">
+                    <ion-icon name="radio-button-on"></ion-icon>
+                    En curso
+                </ion-badge>
+            </div>
+
+            <div class="hero-card" (click)="viewRequestDetail(activeRequest)">
+                <div class="gradient-bg"></div>
+
+                <div class="hero-content">
+                    <div class="hero-header">
+                        <div class="title-block">
+                            <h1>{{ activeRequest.title }}</h1>
+                            <p class="subtitle" *ngIf="activeRequest.description">{{ activeRequest.description }}</p>
+                        </div>
+                    </div>
+
+                    <div class="tags-row">
+                        <div class="tag" *ngFor="let keyword of activeRequest.keywords.slice(0, 3)">
+                            {{ keyword }}
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <ion-icon name="time-outline"></ion-icon>
+                            <div class="stat-info">
+                                <span class="stat-value">{{ getTimeRemaining(activeRequest.expiresAt) }}</span>
+                                <span class="stat-label">minutos</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <ion-icon name="cash-outline"></ion-icon>
+                            <div class="stat-info">
+                                <span class="stat-value">{{ activeRequest.paymentMethod === 'CASH' ? 'Efectivo' :
+                                    'Tarjeta' }}</span>
+                                <span class="stat-label">Método</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="view-details-btn">
+                        Ver detalles
+                        <ion-icon name="arrow-forward"></ion-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty Active State -->
+        <div class="empty-hero" *ngIf="!activeRequest">
+            <div class="empty-icon">
+                <ion-icon name="document-text-outline"></ion-icon>
+            </div>
+            <h2>Sin solicitudes activas</h2>
+            <p>Crea tu primera solicitud y encuentra quien prepare tu comida favorita</p>
+            <ion-button routerLink="/requests/create" class="create-btn" expand="block">
+                <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+                Crear solicitud
+            </ion-button>
+        </div>
+
+        <!-- Past Requests Grid -->
+        <div class="history-section" *ngIf="pastRequests.length > 0">
+            <h2 class="section-title">Historial</h2>
+
+            <div class="history-grid">
+                <div *ngFor="let request of pastRequests" class="history-card" (click)="viewRequestDetail(request)">
+
+                    <div class="card-top">
+                        <ion-badge [color]="getStatusColor(request.status)" class="mini-badge">
+                            {{ getStatusText(request.status) }}
+                        </ion-badge>
+                        <ion-badge *ngIf="!wasAttended(request)" color="danger" class="mini-badge not-attended">
+                            No atendida
+                        </ion-badge>
+                    </div>
+
+                    <h3 class="card-title">{{ request.title }}</h3>
+
+                    <div class="card-tags">
+                        <span *ngFor="let keyword of request.keywords.slice(0, 2)" class="mini-tag">
+                            {{ keyword }}
+                        </span>
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="payment-info">
+                            <ion-icon name="card-outline"></ion-icon>
+                            <span>{{ request.paymentMethod === 'CASH' ? 'Efectivo' : 'Tarjeta' }}</span>
+                        </div>
+                        <ion-icon name="chevron-forward" class="chevron"></ion-icon>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Cargando...</p>
+    </div>
+</ion-content>

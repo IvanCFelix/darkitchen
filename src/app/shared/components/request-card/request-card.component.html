@@ -1,0 +1,42 @@
+<ion-card class="request-card" (click)="onCardClick()">
+    <ion-card-header>
+        <div class="request-header">
+            <div class="title-section">
+                <ion-card-title class="ion-padding">{{ request.title }}</ion-card-title>
+            </div>
+        </div>
+    </ion-card-header>
+
+    <ion-card-content>
+        <p *ngIf="request.description" class="description">
+            {{ request.description }}
+        </p>
+
+        <div class="keywords">
+            <ion-chip *ngFor="let keyword of request.keywords" outline>
+                <span class="keyword-icon">🏷️</span>
+                <ion-label>{{ keyword }}</ion-label>
+            </ion-chip>
+        </div>
+
+        <div class="request-info">
+            <div class="info-item">
+                <ion-icon name="location-outline"></ion-icon>
+                <span>{{ request.address.city }}, {{ request.address.state }}</span>
+            </div>
+            <div class="info-item">
+                <ion-icon name="card-outline"></ion-icon>
+                <span>{{ request.paymentMethod }}</span>
+            </div>
+            <div class="info-item time-item">
+                <ion-icon name="time-outline"></ion-icon>
+                <span>{{ getTimeRemaining() }} minutos</span>
+            </div>
+        </div>
+
+        <ion-button *ngIf="showAcceptButton" expand="block" (click)="onAcceptClick($event)" class="accept-button">
+            <ion-icon slot="start" name="restaurant-outline"></ion-icon>
+            {{ acceptButtonText }}
+        </ion-button>
+    </ion-card-content>
+</ion-card>

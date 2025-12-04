@@ -1,0 +1,147 @@
+<ion-header [translucent]="true">
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-button (click)="goBack()" class="back-button">
+                <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>Carrito de Compras</ion-title>
+        <ion-buttons slot="end" *ngIf="cartItems.length > 0">
+            <ion-button (click)="clearCart()" class="clear-button">
+                <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+    <!-- Empty Cart State -->
+    @if (cartItems.length === 0) {
+    <div class="empty-cart">
+        <div class="empty-icon">
+            <ion-icon name="cart-outline"></ion-icon>
+        </div>
+        <h2>Tu carrito está vacío</h2>
+        <p>Agrega productos desde el menú para comenzar tu pedido</p>
+        <ion-button class="browse-btn" routerLink="/home" expand="block">
+            <ion-icon name="restaurant" slot="start"></ion-icon>
+            Ver menú
+        </ion-button>
+    </div>
+    }
+
+    <!-- Cart Items -->
+    @if (cartItems.length > 0) {
+    <div class="cart-container">
+        <!-- Header Stats -->
+        <div class="cart-header">
+            <div class="stat-card">
+                <ion-icon name="basket"></ion-icon>
+                <div class="stat-info">
+                    <span class="stat-value">{{ getItemsCount() }}</span>
+                    <span class="stat-label">{{ getItemsCount() === 1 ? 'Producto' : 'Productos' }}</span>
+                </div>
+            </div>
+            <div class="stat-card total">
+                <ion-icon name="cash"></ion-icon>
+                <div class="stat-info">
+                    <span class="stat-value">${{ getTotal() }}</span>
+                    <span class="stat-label">Total</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cart Items List -->
+        <div class="items-section">
+            <h2 class="section-title">Tus productos</h2>
+
+            <div class="items-list">
+                @for (item of cartItems; track item.dish.id) {
+                <div class="cart-item">
+                    <div class="item-image">
+                        <img [src]="item.dish.images[0]" [alt]="item.dish.name">
+                        @if (item.dish.available) {
+                        <div class="available-badge">
+                            <ion-badge color="success">Disponible</ion-badge>
+                        </div>
+                        }
+                    </div>
+
+                    <div class="item-details">
+                        <h3 class="item-name">{{ item.dish.name }}</h3>
+                        <p class="item-description">{{ item.dish.description }}</p>
+
+                        <div class="item-meta">
+                            <span class="prep-time">
+                                <ion-icon name="time-outline"></ion-icon>
+                                {{ item.dish.preparationTime }} min
+                            </span>
+                            <span class="rating">
+                                <ion-icon name="star"></ion-icon>
+                                {{ item.dish.rating }}
+                            </span>
+                        </div>
+
+                        <div class="item-footer">
+                            <div class="price-block">
+                                <span class="unit-price">${{ item.dish.price }}</span>
+                                <span class="total-price">${{ item.dish.price * item.quantity }}</span>
+                            </div>
+
+                            <div class="quantity-controls">
+                                <button class="qty-btn" (click)="decreaseQuantity(item)">
+                                    <ion-icon name="remove"></ion-icon>
+                                </button>
+                                <span class="quantity">{{ item.quantity }}</span>
+                                <button class="qty-btn" (click)="increaseQuantity(item)">
+                                    <ion-icon name="add"></ion-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="remove-btn" (click)="removeItem(item)">
+                        <ion-icon name="close"></ion-icon>
+                    </button>
+                </div>
+                }
+            </div>
+        </div>
+
+        <!-- Summary Section -->
+        <div class="summary-section">
+            <h2 class="section-title">Resumen</h2>
+
+            <div class="summary-card">
+                <div class="summary-row">
+                    <span class="label">Subtotal</span>
+                    <span class="value">${{ getTotal() }}</span>
+                </div>
+                <div class="summary-row">
+                    <span class="label">Envío</span>
+                    <span class="value free">Gratis</span>
+                </div>
+                <div class="divider"></div>
+                <div class="summary-row total">
+                    <span class="label">Total</span>
+                    <span class="value">${{ getTotal() }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+</ion-content>
+
+<!-- Fixed Bottom Button -->
+@if (cartItems.length > 0) {
+<div class="bottom-bar">
+    <div class="total-info">
+        <span class="label">Total a pagar</span>
+        <span class="amount">${{ getTotal() }}</span>
+    </div>
+    <ion-button class="confirm-btn" expand="block" (click)="confirmOrder()">
+        <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+        Confirmar pedido
+    </ion-button>
+</div>
+}

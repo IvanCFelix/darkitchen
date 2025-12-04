@@ -17,6 +17,7 @@ export class App {
   private router = inject(Router);
   appModeService = inject(AppModeService);
   showNavbar = true;
+  isOnHomePage = false;
 
   constructor() {
     // Escuchar cambios de ruta para mostrar navbar solo en rutas específicas
@@ -24,9 +25,12 @@ export class App {
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
         const url = event.url;
-        // Mostrar navbar solo en home, orders y profile
+        // Verificar si está en home
+        this.isOnHomePage = url === '/home';
+        // Mostrar navbar solo en home, orders, cart y profile
         this.showNavbar = url === '/home' ||
           url.startsWith('/orders') ||
+          url.startsWith('/cart') ||
           url === '/profile';
       });
   }
@@ -37,15 +41,15 @@ export class App {
 
   // Métodos para obtener iconos y rutas del navbar según el modo
   getSecondNavIcon(): string {
-    return this.appModeService.isUserMode ? 'search-outline' : 'restaurant-outline';
+    return this.appModeService.isUserMode ? 'cart-outline' : 'restaurant-outline';
   }
 
   getSecondNavRoute(): string {
-    return this.appModeService.isUserMode ? '/requests' : '/darkitchen/orders';
+    return this.appModeService.isUserMode ? '/cart' : '/darkitchen/orders';
   }
 
   getFourthNavIcon(): string {
-    return this.appModeService.isUserMode ? 'heart-outline' : 'receipt-outline';
+    return this.appModeService.isUserMode ? 'receipt-outline' : 'receipt-outline';
   }
 
   getFourthNavRoute(): string {

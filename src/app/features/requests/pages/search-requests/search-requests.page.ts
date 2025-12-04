@@ -9,13 +9,14 @@ import { DishService } from '../../../../core/services/dish.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { Request, Darkitchen, Dish } from '../../../../core/models';
+import { RequestCardComponent } from '../../../../shared/components/request-card/request-card.component';
 
 @Component({
   selector: 'app-search-requests',
   templateUrl: './search-requests.page.html',
   styleUrls: ['./search-requests.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, FormsModule]
+  imports: [CommonModule, IonicModule, FormsModule, RequestCardComponent]
 })
 export class SearchRequestsPage implements OnInit {
   private requestService = inject(RequestService);
@@ -44,7 +45,7 @@ export class SearchRequestsPage implements OnInit {
 
     try {
       this.myDarkitchens = await this.darkitchenService.getDarkitchensByOwner(userId).toPromise() || [];
-      
+
       if (this.myDarkitchens.length === 0) {
         this.toastService.showWarning('Primero crea una Darkitchen para responder solicitudes');
         this.router.navigate(['/darkitchen/create']);
@@ -119,17 +120,5 @@ export class SearchRequestsPage implements OnInit {
       console.error('Error accepting request:', error);
       this.toastService.showError('Error al aceptar la solicitud');
     }
-  }
-
-  getTimeRemaining(request: Request): string {
-    const now = new Date().getTime();
-    const expires = request.expiresAt.toMillis();
-    const remaining = expires - now;
-
-    if (remaining <= 0) return 'Expirada';
-
-    const minutes = Math.floor(remaining / 60000);
-    const seconds = Math.floor((remaining % 60000) / 1000);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
 }

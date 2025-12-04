@@ -24,44 +24,9 @@
 
         <!-- Requests List -->
         <div class="requests-list">
-            <ion-card *ngFor="let request of filteredRequests">
-                <ion-card-header>
-                    <div class="request-header">
-                        <ion-card-title>{{ request.title }}</ion-card-title>
-                        <ion-badge color="warning">
-                            {{ getTimeRemaining(request) }}
-                        </ion-badge>
-                    </div>
-                </ion-card-header>
-
-                <ion-card-content>
-                    <p *ngIf="request.description" class="description">
-                        {{ request.description }}
-                    </p>
-
-                    <div class="keywords">
-                        <ion-chip *ngFor="let keyword of request.keywords" outline>
-                            <span class="keyword-icon">🏷️</span>
-                            <ion-label>{{ keyword }}</ion-label>
-                        </ion-chip>
-                    </div>
-
-                    <div class="request-info">
-                        <div class="info-item">
-                            <ion-icon name="location-outline"></ion-icon>
-                            <span>{{ request.address.city }}, {{ request.address.state }}</span>
-                        </div>
-                        <div class="info-item">
-                            <ion-icon name="card-outline"></ion-icon>
-                            <span>{{ request.paymentMethod }}</span>
-                        </div>
-                    </div>
-
-                    <ion-button expand="block" (click)="onAcceptRequest(request)" class="accept-button">
-                        Aceptar Solicitud
-                    </ion-button>
-                </ion-card-content>
-            </ion-card>
+            <app-request-card *ngFor="let request of filteredRequests" [request]="request" [showAcceptButton]="true"
+                (acceptClick)="onAcceptRequest($event)">
+            </app-request-card>
 
             <div class="empty-state" *ngIf="filteredRequests.length === 0">
                 <ion-icon name="search-outline"></ion-icon>

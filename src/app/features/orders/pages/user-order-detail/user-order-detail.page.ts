@@ -2,9 +2,9 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
-import { OrderService } from '../../../../core/services/order.service';
+import { RequestService } from '../../../../core/services/request.service';
 import { ToastService } from '../../../../core/services/toast.service';
-import { Order, OrderStatusHistory, OrderStatus } from '../../../../core/models';
+import { Request } from '../../../../core/models';
 
 @Component({
   selector: 'app-user-order-detail',
@@ -16,73 +16,124 @@ import { Order, OrderStatusHistory, OrderStatus } from '../../../../core/models'
 export class UserOrderDetailPage implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private orderService = inject(OrderService);
+  private requestService = inject(RequestService);
   private toastService = inject(ToastService);
 
-  order: Order | null = null;
-  orderHistory: OrderStatusHistory[] = [];
+  request: Request | null = null;
   isLoading = true;
 
   async ngOnInit(): Promise<void> {
-    const orderId = this.route.snapshot.paramMap.get('id');
-    if (!orderId) {
-      this.toastService.showError('ID de pedido inválido');
+    const requestId = this.route.snapshot.paramMap.get('id');
+    if (!requestId) {
+      this.toastService.showError('ID de solicitud inválido');
       this.router.navigate(['/home']);
       return;
     }
 
     try {
-      const [order, history] = await Promise.all([
-        this.orderService.getOrder(orderId).toPromise(),
-        this.orderService.getOrderHistory(orderId).toPromise()
-      ]);
+      this.requestService.getRequestById(requestId).subscribe({
+        next: async (request) => {
+          if (request) {
+            // Verificar si está expirada
+            if (request.status === 'OPEN' && request.expiresAt) {
+              const now = new Date().getTime();
+              const expiryTime = request.expiresAt.toDate ? request.expiresAt.toDate().getTime() : request.expiresAt.toDate().getTime();
 
-      this.order = order || null;
-      this.orderHistory = history || [];
+              if (now > expiryTime) {
+                // Actualizar a expirada
+                await this.requestService.updateExpiredRequests([request]);
+                // Recargar la solicitud
+                this.requestService.getRequestById(requestId).subscribe({
+                  next: (updatedRequest) => {
+                    this.request = updatedRequest;
+                    this.isLoading = false;
+                  }
+                });
+                return;
+              }
+            }
+          }
+          this.request = request;
+          this.isLoading = false;
+          console.log('Request loaded:', request);
+        },
+        error: (error) => {
+          console.error('Error loading request:', error);
+          this.toastService.showError('Error al cargar la solicitud');
+          this.isLoading = false;
+        }
+      });
     } catch (error) {
-      console.error('Error loading order:', error);
-      this.toastService.showError('Error al cargar el pedido');
-    } finally {
+      console.error('Error loading request:', error);
+      this.toastService.showError('Error al cargar la solicitud');
       this.isLoading = false;
     }
   }
 
-  getStatusText(status: OrderStatus): string {
-    const statusTexts: Record<OrderStatus, string> = {
-      'PRODUCTION': 'En producción',
-      'SHIPPING': 'En camino',
-      'READY_FOR_PICKUP': 'Listo para recoger',
-      'DELIVERED': 'Entregado',
-      'FINISHED': 'Finalizado'
+  getStatusText(status: string): string {
+    const statusTexts: { [key: string]: string } = {
+      'OPEN': 'Abierta',
+      'ACCEPTED': 'Aceptada',
+      'IN_PROGRESS': 'En preparación',
+      'READY': 'Lista',
+      'COMPLETED': 'Completada',
+      'CANCELLED': 'Cancelada',
+      'EXPIRED': 'Expirada'
     };
-    return statusTexts[status];
+    return statusTexts[status] || status;
   }
 
-  getStatusIcon(status: OrderStatus): string {
-    const icons: Record<OrderStatus, string> = {
-      'PRODUCTION': 'restaurant',
-      'SHIPPING': 'bicycle',
-      'READY_FOR_PICKUP': 'bag-check',
-      'DELIVERED': 'checkmark-circle',
-      'FINISHED': 'trophy'
+  getStatusColor(status: string): string {
+    const colors: { [key: string]: string } = {
+      'OPEN': 'primary',
+      'ACCEPTED': 'secondary',
+      'IN_PROGRESS': 'warning',
+      'READY': 'success',
+      'COMPLETED': 'medium',
+      'CANCELLED': 'danger',
+      'EXPIRED': 'dark'
     };
-    return icons[status];
+    return colors[status] || 'medium';
   }
 
-  isStatusActive(status: OrderStatus): boolean {
-    if (!this.order) return false;
-    
-    const statusOrder: OrderStatus[] = [
-      'PRODUCTION',
-      'SHIPPING',
-      'READY_FOR_PICKUP',
-      'DELIVERED',
-      'FINISHED'
-    ];
+  getStatusIcon(status: string): string {
+    const icons: { [key: string]: string } = {
+      'OPEN': 'search',
+      'ACCEPTED': 'checkmark-circle',
+      'IN_PROGRESS': 'restaurant',
+      'READY': 'bag-check',
+      'COMPLETED': 'trophy',
+      'CANCELLED': 'close-circle',
+      'EXPIRED': 'time'
+    };
+    return icons[status] || 'help';
+  }
 
-    const currentIndex = statusOrder.indexOf(this.order.status);
+  isStatusActive(status: string): boolean {
+    if (!this.request) return false;
+
+    const statusOrder = ['OPEN', 'ACCEPTED', 'IN_PROGRESS', 'READY', 'COMPLETED'];
+    const currentIndex = statusOrder.indexOf(this.request.status);
     const checkIndex = statusOrder.indexOf(status);
-    
+
     return checkIndex <= currentIndex;
   }
+
+  getTimeRemaining(): string {
+    if (!this.request?.expiresAt) return '0';
+
+    const now = new Date().getTime();
+    const expiry = this.request.expiresAt.toDate ? this.request.expiresAt.toDate().getTime() : this.request.expiresAt.toDate().getTime();
+    const diff = expiry - now;
+
+    if (diff <= 0) return '0';
+
+    const minutes = Math.floor(diff / 60000);
+    return minutes.toString();
+  }
+
+  back(): void {
+    history.back();
+  }
+
 }

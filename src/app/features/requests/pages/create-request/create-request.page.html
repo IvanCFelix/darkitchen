@@ -3,112 +3,227 @@
         <ion-buttons slot="start">
             <ion-back-button defaultHref="/home"></ion-back-button>
         </ion-buttons>
-        <ion-title>Crear Solicitud</ion-title>
+        <ion-title>Nueva Solicitud</ion-title>
     </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-    <form [formGroup]="requestForm" (ngSubmit)="onSubmit()">
-        <!-- Request Details -->
-        <div class="section">
-            <h3>Detalles de la Solicitud</h3>
-
-            <ion-item>
-                <ion-input formControlName="title" label="Título" labelPlacement="floating"
-                    placeholder="Ej: Pizza margarita grande" [clearInput]="true" errorText="El título es obligatorio">
-                </ion-input>
-            </ion-item>
-            <ion-text color="danger" class="error-text"
-                *ngIf="requestForm.get('title')?.invalid && requestForm.get('title')?.touched">
-                <small>El título es obligatorio</small>
-            </ion-text>
-
-            <ion-item>
-                <ion-textarea formControlName="description" label="Descripción (opcional)" labelPlacement="floating"
-                    placeholder="Detalles adicionales..." rows="3">
-                </ion-textarea>
-            </ion-item>
-
-            <ion-item>
-                <ion-input formControlName="keywords" label="Palabras clave" labelPlacement="floating"
-                    placeholder="pizza, margarita, italiana" [clearInput]="true"
-                    errorText="Las palabras clave son obligatorias">
-                </ion-input>
-            </ion-item>
-            <ion-text color="danger" class="error-text"
-                *ngIf="requestForm.get('keywords')?.invalid && requestForm.get('keywords')?.touched">
-                <small>Ingresa al menos una palabra clave (separadas por comas)</small>
-            </ion-text>
-            <ion-note class="helper-text">Separa las palabras clave con comas</ion-note>
+<ion-content>
+    <div class="form-container">
+        <div class="welcome-header">
+            <div class="icon-container">
+                <ion-icon name="receipt-outline"></ion-icon>
+            </div>
+            <h2>Cuéntanos qué necesitas</h2>
+            <p>Completa los datos y las darkitchens cercanas podrán responder</p>
         </div>
 
-        <!-- Address -->
-        <div class="section">
-            <h3>Dirección de Entrega</h3>
+        <form [formGroup]="requestForm" (ngSubmit)="onSubmit()">
+            <!-- Request Details Card -->
+            <div class="form-card">
+                <div class="card-header">
+                    <ion-icon name="document-text-outline"></ion-icon>
+                    <h3>Detalles de la Solicitud</h3>
+                </div>
 
-            <div class="address-grid">
-                <ion-item class="street-item">
-                    <ion-input formControlName="street" label="Calle" labelPlacement="floating"
-                        placeholder="Nombre de la calle" errorText="La calle es obligatoria">
-                    </ion-input>
-                </ion-item>
+                <div class="form-group">
+                    <ion-item lines="none" class="custom-item">
+                        <ion-input formControlName="title" label="¿Qué se te antoja?" labelPlacement="floating"
+                            placeholder="Ej: Pizza margarita grande" [clearInput]="true">
+                        </ion-input>
+                    </ion-item>
+                    <div class="error-message"
+                        *ngIf="requestForm.get('title')?.invalid && requestForm.get('title')?.touched">
+                        <ion-icon name="alert-circle-outline"></ion-icon>
+                        <span>El título es obligatorio (mínimo 5 caracteres)</span>
+                    </div>
+                </div>
 
-                <ion-item class="number-item">
-                    <ion-input formControlName="number" label="Número" labelPlacement="floating" placeholder="123"
-                        errorText="El número es obligatorio">
-                    </ion-input>
-                </ion-item>
+                <div class="form-group">
+                    <ion-item lines="none" class="custom-item textarea-item">
+                        <ion-textarea formControlName="description" label="Descripción (opcional)"
+                            labelPlacement="floating" placeholder="Agrega detalles adicionales, preferencias, etc."
+                            rows="3" autoGrow="true">
+                        </ion-textarea>
+                    </ion-item>
+                </div>
+
+                <div class="form-group">
+                    <ion-item lines="none" class="custom-item">
+                        <ion-input formControlName="keywords" label="Palabras clave" labelPlacement="floating"
+                            placeholder="pizza, margarita, italiana" [clearInput]="true">
+                        </ion-input>
+                    </ion-item>
+                    <div class="helper-note">
+                        <ion-icon name="information-circle-outline"></ion-icon>
+                        <span>Separa las palabras con comas para mejor búsqueda</span>
+                    </div>
+                    <div class="error-message"
+                        *ngIf="requestForm.get('keywords')?.invalid && requestForm.get('keywords')?.touched">
+                        <ion-icon name="alert-circle-outline"></ion-icon>
+                        <span>Ingresa al menos una palabra clave</span>
+                    </div>
+                </div>
             </div>
 
-            <ion-item>
-                <ion-input formControlName="city" label="Ciudad" labelPlacement="floating" placeholder="Ciudad"
-                    errorText="La ciudad es obligatoria">
-                </ion-input>
-            </ion-item>
+            <!-- Address Card -->
+            <div class="form-card">
+                <div class="card-header">
+                    <ion-icon name="location-outline"></ion-icon>
+                    <h3>Dirección de Entrega</h3>
+                </div>
 
-            <div class="address-grid">
-                <ion-item>
-                    <ion-input formControlName="state" label="Estado" labelPlacement="floating" placeholder="Estado"
-                        errorText="El estado es obligatorio">
-                    </ion-input>
-                </ion-item>
+                <div class="address-row">
+                    <div class="form-group flex-2">
+                        <ion-item lines="none" class="custom-item">
+                            <ion-input formControlName="street" label="Calle" labelPlacement="floating"
+                                placeholder="Nombre de la calle">
+                            </ion-input>
+                        </ion-item>
+                    </div>
 
-                <ion-item>
-                    <ion-input formControlName="zipCode" label="Código Postal" labelPlacement="floating"
-                        placeholder="12345" errorText="El código postal es obligatorio">
-                    </ion-input>
-                </ion-item>
+                    <div class="form-group flex-1">
+                        <ion-item lines="none" class="custom-item">
+                            <ion-input formControlName="number" label="Número" labelPlacement="floating"
+                                placeholder="123">
+                            </ion-input>
+                        </ion-item>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <ion-item lines="none" class="custom-item">
+                        <ion-input formControlName="city" label="Ciudad" labelPlacement="floating" placeholder="Ciudad">
+                        </ion-input>
+                    </ion-item>
+                </div>
+
+                <div class="address-row">
+                    <div class="form-group flex-1">
+                        <ion-item lines="none" class="custom-item">
+                            <ion-input formControlName="state" label="Estado" labelPlacement="floating"
+                                placeholder="Estado">
+                            </ion-input>
+                        </ion-item>
+                    </div>
+
+                    <div class="form-group flex-1">
+                        <ion-item lines="none" class="custom-item">
+                            <ion-input formControlName="zipCode" label="C.P." labelPlacement="floating"
+                                placeholder="12345">
+                            </ion-input>
+                        </ion-item>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <ion-item lines="none" class="custom-item">
+                        <ion-input formControlName="additionalInfo" label="Referencias (opcional)"
+                            labelPlacement="floating" placeholder="Depto, color de casa, referencias, etc.">
+                        </ion-input>
+                    </ion-item>
+                </div>
             </div>
 
-            <ion-item>
-                <ion-input formControlName="additionalInfo" label="Información adicional (opcional)"
-                    labelPlacement="floating" placeholder="Depto, referencias, etc.">
-                </ion-input>
-            </ion-item>
-        </div>
+            <!-- Payment Card -->
+            <div class="form-card payment-card">
+                <div class="card-header">
+                    <ion-icon name="card-outline"></ion-icon>
+                    <h3>Método de Pago</h3>
+                </div>
 
-        <!-- Payment Method -->
-        <div class="section">
-            <h3>Método de Pago</h3>
+                <!-- Payment Method Selector -->
+                <div class="form-group">
+                    <ion-item lines="none" class="custom-item">
+                        <ion-select formControlName="paymentMethod" label="Selecciona método de pago"
+                            labelPlacement="floating" interface="action-sheet"
+                            (ionChange)="onPaymentMethodChange($event)">
+                            <ion-select-option value="CASH">Efectivo</ion-select-option>
+                            <ion-select-option value="CARD">Tarjeta</ion-select-option>
+                        </ion-select>
+                    </ion-item>
+                </div>
 
-            <ion-radio-group formControlName="paymentMethod">
-                <ion-item *ngFor="let method of paymentMethods">
-                    <ion-radio [value]="method.value" labelPlacement="end">
-                        {{ method.label }}
-                    </ion-radio>
-                </ion-item>
-            </ion-radio-group>
-        </div>
+                <!-- Notice for Cash Payment -->
+                <div class="payment-notice" *ngIf="requestForm.get('paymentMethod')?.value === 'CASH'">
+                    <ion-icon name="information-circle"></ion-icon>
+                    <div>
+                        <strong>Pago en efectivo</strong>
+                        <p>Se requiere una tarjeta registrada como garantía</p>
+                    </div>
+                </div>
 
-        <!-- Submit Button -->
-        <ion-button expand="block" type="submit" [disabled]="isLoading" class="submit-button">
-            <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
-            <span *ngIf="!isLoading">Crear Solicitud</span>
-        </ion-button>
+                <!-- Notice for Card Payment -->
+                <div class="payment-notice" *ngIf="requestForm.get('paymentMethod')?.value === 'CARD'">
+                    <ion-icon name="information-circle"></ion-icon>
+                    <div>
+                        <strong>Pago con tarjeta</strong>
+                        <p>Se cargará a tu tarjeta al confirmar la entrega</p>
+                    </div>
+                </div>
 
-        <p class="expiration-notice">
-            <ion-icon name="time-outline"></ion-icon>
-            La solicitud expirará automáticamente en 10 minutos
-        </p>
-    </form>
+                <!-- Card Selector - Show if CARD payment OR if CASH but needs guarantee -->
+                <div *ngIf="requestForm.get('paymentMethod')?.value === 'CARD' || 
+                           (requestForm.get('paymentMethod')?.value === 'CASH' && cards.length === 0)">
+
+                    <div class="form-group" *ngIf="cards.length > 0">
+                        <ion-item lines="none" class="custom-item select-item">
+                            <ion-select formControlName="cardId" label="Selecciona una tarjeta"
+                                labelPlacement="floating" interface="action-sheet" (ionChange)="onCardChange($event)">
+                                <ion-select-option *ngFor="let card of cards" [value]="card.id">
+                                    {{ getCardDisplay(card) }}
+                                </ion-select-option>
+                            </ion-select>
+                            <ion-icon slot="end" name="chevron-down-outline" class="select-icon"></ion-icon>
+                        </ion-item>
+                    </div>
+
+                    <!-- Selected Card Display -->
+                    <div class="card-info" *ngIf="selectedCard && requestForm.get('paymentMethod')?.value === 'CARD'">
+                        <ion-icon [name]="cardService.getCardBrandIcon(selectedCard.brand)"></ion-icon>
+                        <div class="card-details">
+                            <span class="card-label">{{ cardService.getCardBrandName(selectedCard.brand) }}</span>
+                            <span class="card-number">•••• •••• •••• {{ selectedCard.lastFourDigits }}</span>
+                        </div>
+                        <ion-badge color="success">Verificada</ion-badge>
+                    </div>
+
+                    <!-- No Cards Message -->
+                    <div class="no-cards-message" *ngIf="cards.length === 0">
+                        <ion-icon name="card-outline"></ion-icon>
+                        <p>Aún no tienes tarjetas registradas</p>
+                    </div>
+
+                    <!-- Add Card Button -->
+                    <ion-button expand="block" fill="outline" class="add-card-button" (click)="openAddCardModal()">
+                        <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+                        {{ cards.length > 0 ? 'Agregar otra tarjeta' : 'Agregar tarjeta' }}
+                    </ion-button>
+                </div>
+
+                <!-- Payment Summary -->
+                <div class="payment-method-display" *ngIf="requestForm.get('paymentMethod')?.value === 'CASH'">
+                    <ion-icon name="cash-outline"></ion-icon>
+                    <span>Pagarás en efectivo al recibir</span>
+                </div>
+
+                <div class="payment-method-display"
+                    *ngIf="requestForm.get('paymentMethod')?.value === 'CARD' && selectedCard">
+                    <ion-icon name="card-outline"></ion-icon>
+                    <span>Se cobrará a tu {{ cardService.getCardBrandName(selectedCard.brand) }} •••• {{
+                        selectedCard.lastFourDigits }}</span>
+                </div>
+            </div> <!-- Submit Button -->
+            <ion-button expand="block" type="submit" [disabled]="isLoading || requestForm.invalid"
+                class="submit-button">
+                <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+                <ion-icon *ngIf="!isLoading" name="paper-plane-outline" slot="start"></ion-icon>
+                <span *ngIf="!isLoading">Publicar Solicitud</span>
+            </ion-button>
+
+            <div class="expiration-notice">
+                <ion-icon name="time-outline"></ion-icon>
+                <span>Tu solicitud expirará en <strong>10 minutos</strong></span>
+            </div>
+        </form>
+    </div>
 </ion-content>

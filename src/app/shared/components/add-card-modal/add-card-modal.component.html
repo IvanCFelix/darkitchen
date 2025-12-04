@@ -1,0 +1,115 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-button (click)="dismiss()">
+                <ion-icon name="close"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>Agregar Tarjeta</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <div class="modal-container">
+        <div class="card-preview">
+            <div class="card-chip"></div>
+            <div class="card-number">
+                {{ cardForm.get('cardNumber')?.value || '•••• •••• •••• ••••' }}
+            </div>
+            <div class="card-footer">
+                <div class="card-holder">
+                    <div class="label">TITULAR</div>
+                    <div class="value">{{ cardForm.get('cardholderName')?.value || 'NOMBRE COMPLETO' }}</div>
+                </div>
+                <div class="card-expiry">
+                    <div class="label">VENCE</div>
+                    <div class="value">
+                        {{ cardForm.get('expiryMonth')?.value || 'MM' }}/{{ cardForm.get('expiryYear')?.value || 'AA' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form [formGroup]="cardForm" (ngSubmit)="onSubmit()">
+            <div class="form-section">
+                <div class="form-group">
+                    <ion-item lines="none" class="custom-item">
+                        <ion-input formControlName="cardNumber" label="Número de tarjeta" labelPlacement="floating"
+                            type="text" inputmode="numeric" maxlength="19" placeholder="1234 5678 9012 3456"
+                            (ionInput)="formatCardNumber($event)" (ionBlur)="onCardNumberInput()">
+                        </ion-input>
+                        <ion-icon slot="end" name="card-outline" class="input-icon"></ion-icon>
+                    </ion-item>
+                    <div class="error-message"
+                        *ngIf="cardForm.get('cardNumber')?.invalid && cardForm.get('cardNumber')?.touched">
+                        <ion-icon name="alert-circle-outline"></ion-icon>
+                        <span *ngIf="cardForm.get('cardNumber')?.errors?.['required']">El número es obligatorio</span>
+                        <span *ngIf="cardForm.get('cardNumber')?.errors?.['invalidCard']">Número de tarjeta
+                            inválido</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <ion-item lines="none" class="custom-item">
+                        <ion-input formControlName="cardholderName" label="Nombre del titular" labelPlacement="floating"
+                            type="text" placeholder="Como aparece en la tarjeta">
+                        </ion-input>
+                        <ion-icon slot="end" name="person-outline" class="input-icon"></ion-icon>
+                    </ion-item>
+                    <div class="error-message"
+                        *ngIf="cardForm.get('cardholderName')?.invalid && cardForm.get('cardholderName')?.touched">
+                        <ion-icon name="alert-circle-outline"></ion-icon>
+                        <span>Ingresa el nombre del titular</span>
+                    </div>
+                </div>
+
+                <div class="row-group">
+                    <div class="form-group flex-1">
+                        <ion-item lines="none" class="custom-item">
+                            <ion-input formControlName="expiryMonth" label="Mes" labelPlacement="floating" type="text"
+                                inputmode="numeric" maxlength="2" placeholder="MM">
+                            </ion-input>
+                        </ion-item>
+                    </div>
+
+                    <div class="form-group flex-1">
+                        <ion-item lines="none" class="custom-item">
+                            <ion-input formControlName="expiryYear" label="Año" labelPlacement="floating" type="text"
+                                inputmode="numeric" maxlength="2" placeholder="AA">
+                            </ion-input>
+                        </ion-item>
+                    </div>
+
+                    <div class="form-group flex-1">
+                        <ion-item lines="none" class="custom-item">
+                            <ion-input formControlName="cvv" label="CVV" labelPlacement="floating" type="text"
+                                inputmode="numeric" maxlength="4" placeholder="123">
+                            </ion-input>
+                        </ion-item>
+                    </div>
+                </div>
+
+                <div class="error-message" *ngIf="(cardForm.get('expiryMonth')?.invalid && cardForm.get('expiryMonth')?.touched) || 
+                 (cardForm.get('expiryYear')?.invalid && cardForm.get('expiryYear')?.touched) ||
+                 (cardForm.get('cvv')?.invalid && cardForm.get('cvv')?.touched)">
+                    <ion-icon name="alert-circle-outline"></ion-icon>
+                    <span>Verifica la fecha de expiración y CVV</span>
+                </div>
+            </div>
+
+            <div class="security-notice">
+                <ion-icon name="shield-checkmark"></ion-icon>
+                <div>
+                    <strong>Información segura</strong>
+                    <p>Tus datos están protegidos y encriptados</p>
+                </div>
+            </div>
+
+            <ion-button expand="block" type="submit" [disabled]="isLoading || cardForm.invalid" class="submit-button">
+                <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+                <ion-icon *ngIf="!isLoading" name="checkmark-circle-outline" slot="start"></ion-icon>
+                <span *ngIf="!isLoading">Guardar Tarjeta</span>
+            </ion-button>
+        </form>
+    </div>
+</ion-content>

@@ -6,24 +6,28 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 import { DishService } from '../../../core/services/dish.service';
 import { RequestService } from '../../../core/services/request.service';
+import { DarkitchenService } from '../../../core/services/darkitchen.service';
 import { AppModeService } from '../../../core/services/app-mode.service';
-import { User, Dish, Request } from '../../../core/models';
+import { User, Dish, Request, Darkitchen } from '../../../core/models';
+import { RequestCardComponent } from '../../../shared/components/request-card/request-card.component';
 
 @Component({
     selector: 'app-home',
     templateUrl: './home.page.html',
     styleUrls: ['./home.page.scss'],
     standalone: true,
-    imports: [CommonModule, IonicModule, FormsModule]
+    imports: [CommonModule, IonicModule, FormsModule, RequestCardComponent]
 })
 export class HomePage implements OnInit {
     private authService = inject(AuthService);
     private dishService = inject(DishService);
     private requestService = inject(RequestService);
+    private darkitchenService = inject(DarkitchenService);
     appModeService = inject(AppModeService);
     router = inject(Router);
 
     user: User | null = null;
+    darkitchen: Darkitchen | null = null;
     dishes: Dish[] = [];
     filteredDishes: Dish[] = [];
     requests: Request[] = [];
@@ -51,6 +55,7 @@ export class HomePage implements OnInit {
             if (mode === 'user') {
                 this.loadDishes();
             } else {
+                this.loadDarkitchen();
                 this.loadRequests();
             }
         });
@@ -63,6 +68,7 @@ export class HomePage implements OnInit {
                 if (this.appModeService.isUserMode) {
                     await this.loadDishes();
                 } else {
+                    await this.loadDarkitchen();
                     await this.loadRequests();
                 }
             }
@@ -78,6 +84,19 @@ export class HomePage implements OnInit {
             });
         } catch (error) {
             console.error('Error loading dishes:', error);
+        }
+    }
+
+    async loadDarkitchen(): Promise<void> {
+        try {
+            const userId = this.authService.getCurrentUserId();
+            if (userId) {
+                this.darkitchenService.getDarkitchensByOwner(userId).subscribe(darkitchens => {
+                    this.darkitchen = darkitchens && darkitchens.length > 0 ? darkitchens[0] : null;
+                });
+            }
+        } catch (error) {
+            console.error('Error loading darkitchen:', error);
         }
     }
 
@@ -150,28 +169,24 @@ export class HomePage implements OnInit {
         this.filteredRequests = filtered;
     }
 
-    getTimeRemaining(request: Request): string {
-        const now = new Date();
-        const expiresAt = request.expiresAt.toDate();
-        const diffMs = expiresAt.getTime() - now.getTime();
-        const diffMins = Math.floor(diffMs / 60000);
-
-        if (diffMins < 0) return 'Expirado';
-        if (diffMins < 60) return `${diffMins} min`;
-        const hours = Math.floor(diffMins / 60);
-        const mins = diffMins % 60;
-        return `${hours}h ${mins}m`;
-    }
-
     viewDishDetail(dish: Dish): void {
-        console.log('View dish:', dish);
+        this.router.navigate(['/dish', dish.id]);
     }
 
     viewRequestDetail(request: Request): void {
         console.log('View request:', request);
     }
 
+    onAcceptRequest(request: Request): void {
+        console.log('Accept request:', request);
+        // Aquí se puede navegar a una página de detalles o mostrar un modal
+    }
+
     navigateToProfile(): void {
         this.router.navigate(['/profile']);
+    }
+
+    navigateToOrders(): void {
+        this.router.navigate(['/orders']);
     }
 }

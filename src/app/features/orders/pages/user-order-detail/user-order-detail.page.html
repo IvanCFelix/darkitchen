@@ -1,98 +1,156 @@
-<ion-header>
+<ion-header [translucent]="true">
     <ion-toolbar>
         <ion-buttons slot="start">
-            <ion-back-button defaultHref="/home"></ion-back-button>
+            <ion-button (click)="back()" class="back-button">
+                <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+            </ion-button>
         </ion-buttons>
         <ion-title>Detalle del Pedido</ion-title>
     </ion-toolbar>
 </ion-header>
 
-<ion-content>
-    <div *ngIf="!isLoading && order">
-        <!-- Order Header -->
-        <div class="order-header ion-padding">
-            <h2>Pedido #{{ order.id.substring(0, 8) }}</h2>
-            <div class="price">${{ order.price }}</div>
-            <p class="delivery-type">
-                {{ order.deliveryType === 'DELIVERY' ? 'Entrega a domicilio' : 'Recoger en local' }}
-            </p>
+<ion-content [fullscreen]="true">
+    @if (!isLoading && request) {
+    <div class="order-container">
+        <!-- Hero Section with Image -->
+        <div class="hero-section">
+            <div class="gradient-overlay"></div>
+
+            <div class="hero-content">
+                <div class="status-row">
+                    <ion-badge [color]="getStatusColor(request.status)" class="status-badge">
+                        <ion-icon [name]="getStatusIcon(request.status)"></ion-icon>
+                        {{ getStatusText(request.status) }}
+                    </ion-badge>
+                </div>
+
+                <h1 class="order-title">{{ request.title }}</h1>
+                @if (request.description) {
+                <p class="order-subtitle ion-padding-bottom" style="font-weight: bold; text-transform: capitalize;">{{
+                    request.description }}</p>
+                }
+            </div>
         </div>
 
-        <!-- Order Progress -->
-        <div class="progress-section ion-padding">
-            <h3>Estado del Pedido</h3>
+        <!-- Main Card -->
+        <div class="content-card">
+            <!-- Keywords Section -->
+            <div class="keywords-section">
+                <h2 class="section-title">Palabras clave</h2>
+                <div class="keywords-list">
+                    @for (keyword of request.keywords; track keyword) {
+                    <ion-chip class="keyword-chip">
+                        <ion-label>{{ keyword }}</ion-label>
+                    </ion-chip>
+                    }
+                </div>
+            </div>
 
-            <div class="timeline">
-                <div class="timeline-item" [class.active]="isStatusActive('PRODUCTION')">
-                    <div class="icon-wrapper">
-                        <ion-icon [name]="getStatusIcon('PRODUCTION')"></ion-icon>
+            <!-- Info Section -->
+            <div class="info-section">
+                <h2 class="section-title">Información</h2>
+
+                <div class="info-grid">
+                    @if (request.status === 'OPEN') {
+                    <div class="info-item">
+                        <div class="info-icon warning">
+                            <ion-icon name="time"></ion-icon>
+                        </div>
+                        <div class="info-text">
+                            <span class="info-label">Tiempo restante</span>
+                            <span class="info-value warning">{{ getTimeRemaining() }} minutos</span>
+                        </div>
                     </div>
-                    <div class="content">
-                        <h4>{{ getStatusText('PRODUCTION') }}</h4>
-                        <p>Tu pedido está siendo preparado</p>
+                    }
+
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <ion-icon name="card"></ion-icon>
+                        </div>
+                        <div class="info-text">
+                            <span class="info-label">Método de pago</span>
+                            <span class="info-value">{{ request.paymentMethod === 'CASH' ? 'Efectivo' : 'Tarjeta'
+                                }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-item full-width">
+                        <div class="info-icon">
+                            <ion-icon name="location"></ion-icon>
+                        </div>
+                        <div class="info-text">
+                            <span class="info-label">Dirección de entrega</span>
+                            <span class="info-value">{{ request.address.street }} {{ request.address.number }}, {{
+                                request.address.city }}</span>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="timeline-item"
-                    [class.active]="isStatusActive(order.deliveryType === 'DELIVERY' ? 'SHIPPING' : 'READY_FOR_PICKUP')"
-                    *ngIf="order.deliveryType === 'DELIVERY' || order.status === 'READY_FOR_PICKUP'">
-                    <div class="icon-wrapper">
-                        <ion-icon
-                            [name]="getStatusIcon(order.deliveryType === 'DELIVERY' ? 'SHIPPING' : 'READY_FOR_PICKUP')"></ion-icon>
-                    </div>
-                    <div class="content">
-                        <h4>{{ getStatusText(order.deliveryType === 'DELIVERY' ? 'SHIPPING' : 'READY_FOR_PICKUP') }}
-                        </h4>
-                        <p>{{ order.deliveryType === 'DELIVERY' ? 'En camino a tu dirección' : 'Puedes recoger tu
-                            pedido' }}</p>
-                    </div>
-                </div>
+            <!-- Status Timeline -->
+            <div class="timeline-section">
+                <h2 class="section-title">Estado de la Solicitud</h2>
 
-                <div class="timeline-item" [class.active]="isStatusActive('DELIVERED')">
-                    <div class="icon-wrapper">
-                        <ion-icon [name]="getStatusIcon('DELIVERED')"></ion-icon>
+                <div class="timeline">
+                    <div class="timeline-step" [class.completed]="isStatusActive('OPEN')">
+                        <div class="step-marker">
+                            <ion-icon name="search"></ion-icon>
+                        </div>
+                        <div class="step-content">
+                            <h3>Abierta</h3>
+                            <p>Buscando darkitchen disponible</p>
+                        </div>
                     </div>
-                    <div class="content">
-                        <h4>{{ getStatusText('DELIVERED') }}</h4>
-                        <p>Pedido entregado</p>
-                    </div>
-                </div>
 
-                <div class="timeline-item" [class.active]="isStatusActive('FINISHED')">
-                    <div class="icon-wrapper">
-                        <ion-icon [name]="getStatusIcon('FINISHED')"></ion-icon>
+                    <div class="timeline-step" [class.completed]="isStatusActive('ACCEPTED')">
+                        <div class="step-marker">
+                            <ion-icon name="checkmark-circle"></ion-icon>
+                        </div>
+                        <div class="step-content">
+                            <h3>Aceptada</h3>
+                            <p>Una darkitchen aceptó tu solicitud</p>
+                        </div>
                     </div>
-                    <div class="content">
-                        <h4>{{ getStatusText('FINISHED') }}</h4>
-                        <p>Pedido finalizado</p>
+
+                    <div class="timeline-step" [class.completed]="isStatusActive('IN_PROGRESS')">
+                        <div class="step-marker">
+                            <ion-icon name="restaurant"></ion-icon>
+                        </div>
+                        <div class="step-content">
+                            <h3>En Preparación</h3>
+                            <p>Tu platillo está siendo preparado</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-step" [class.completed]="isStatusActive('READY')">
+                        <div class="step-marker">
+                            <ion-icon name="bag-check"></ion-icon>
+                        </div>
+                        <div class="step-content">
+                            <h3>Listo</h3>
+                            <p>Tu pedido está listo</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-step" [class.completed]="isStatusActive('COMPLETED')">
+                        <div class="step-marker">
+                            <ion-icon name="trophy"></ion-icon>
+                        </div>
+                        <div class="step-content">
+                            <h3>Completado</h3>
+                            <p>Solicitud completada exitosamente</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Payment Info -->
-        <div class="info-section ion-padding" *ngIf="order.paymentSimulation">
-            <h3>Información de Pago</h3>
-            <ion-card>
-                <ion-card-content>
-                    <div class="info-row">
-                        <span>Método:</span>
-                        <strong>{{ order.paymentSimulation.method }}</strong>
-                    </div>
-                    <div class="info-row">
-                        <span>Estado:</span>
-                        <ion-badge color="success">Pagado</ion-badge>
-                    </div>
-                    <div class="info-row" *ngIf="order.paymentSimulation.transactionId">
-                        <span>ID Transacción:</span>
-                        <code>{{ order.paymentSimulation.transactionId }}</code>
-                    </div>
-                </ion-card-content>
-            </ion-card>
-        </div>
     </div>
+    }
 
-    <div class="loading-container" *ngIf="isLoading">
+    @if (isLoading) {
+    <div class="loading-container">
         <ion-spinner name="crescent"></ion-spinner>
+        <p>Cargando detalles...</p>
     </div>
+    }
 </ion-content>
