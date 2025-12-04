@@ -29,7 +29,7 @@ export const onRequestCreated = functions.firestore
         setTimeout(async () => {
           const requestRef = db.collection('requests').doc(requestId);
           const requestDoc = await requestRef.get();
-          
+
           if (requestDoc.exists && requestDoc.data()?.status === 'OPEN') {
             await requestRef.update({
               status: 'EXPIRED'
@@ -122,9 +122,9 @@ export const acceptRequest = functions.https.onCall(async (data, context) => {
 
     // Use transaction to ensure atomicity
     await db.runTransaction(async (transaction) => {
-      // Update request status
+      // Update request status to PRODUCTION (accepted and in production)
       transaction.update(requestRef, {
-        status: 'ACCEPTED',
+        status: 'PRODUCTION',
         acceptedByDarkitchenId: darkitchenId,
         acceptedAt: admin.firestore.FieldValue.serverTimestamp()
       });
@@ -134,6 +134,7 @@ export const acceptRequest = functions.https.onCall(async (data, context) => {
       const order = {
         id: orderRef.id,
         requestId,
+        requestTitle: requestData.title || 'Sin título',
         dishId,
         darkitchenId,
         darkitchenOwnerId: userId,

@@ -45,7 +45,7 @@ export class App {
   }
 
   getSecondNavRoute(): string {
-    return this.appModeService.isUserMode ? '/cart' : '/darkitchen/orders';
+    return this.appModeService.isUserMode ? '/cart' : '/darkitchen/dishes';
   }
 
   getFourthNavIcon(): string {

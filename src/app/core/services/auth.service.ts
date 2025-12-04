@@ -76,6 +76,7 @@ export class AuthService {
   }
 
   logout(): Observable<void> {
+    localStorage.clear();
     return from(signOut(this.auth));
   }
 

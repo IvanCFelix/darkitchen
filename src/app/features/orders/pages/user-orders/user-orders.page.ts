@@ -69,10 +69,11 @@ export class UserOrdersPage implements OnInit {
     getStatusText(status: RequestStatus): string {
         const statusMap: Record<RequestStatus, string> = {
             'OPEN': 'Activa',
-            'ACCEPTED': 'Aceptada',
-            'IN_PROGRESS': 'En preparación',
-            'READY': 'Lista',
-            'COMPLETED': 'Completada',
+            'PRODUCTION': 'En producción',
+            'SHIPPING': 'En camino',
+            'READY_FOR_PICKUP': 'Listo para recoger',
+            'DELIVERED': 'Entregado',
+            'FINISHED': 'Finalizado',
             'CANCELLED': 'Cancelada',
             'EXPIRED': 'Expirada'
         };
@@ -82,10 +83,11 @@ export class UserOrdersPage implements OnInit {
     getStatusColor(status: RequestStatus): string {
         const colorMap: Record<RequestStatus, string> = {
             'OPEN': 'primary',
-            'ACCEPTED': 'secondary',
-            'IN_PROGRESS': 'warning',
-            'READY': 'success',
-            'COMPLETED': 'medium',
+            'PRODUCTION': 'warning',
+            'SHIPPING': 'primary',
+            'READY_FOR_PICKUP': 'success',
+            'DELIVERED': 'success',
+            'FINISHED': 'medium',
             'CANCELLED': 'danger',
             'EXPIRED': 'dark'
         };

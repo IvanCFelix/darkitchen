@@ -73,10 +73,11 @@ export class UserOrderDetailPage implements OnInit {
   getStatusText(status: RequestStatus): string {
     const statusTexts: Record<RequestStatus, string> = {
       'OPEN': 'Abierta',
-      'ACCEPTED': 'Aceptada',
-      'IN_PROGRESS': 'En preparación',
-      'READY': 'Lista',
-      'COMPLETED': 'Completada',
+      'PRODUCTION': 'En producción',
+      'SHIPPING': 'En camino',
+      'READY_FOR_PICKUP': 'Listo para recoger',
+      'DELIVERED': 'Entregado',
+      'FINISHED': 'Finalizado',
       'CANCELLED': 'Cancelada',
       'EXPIRED': 'Expirada'
     };
@@ -86,10 +87,11 @@ export class UserOrderDetailPage implements OnInit {
   getStatusColor(status: RequestStatus): string {
     const colors: Record<RequestStatus, string> = {
       'OPEN': 'primary',
-      'ACCEPTED': 'secondary',
-      'IN_PROGRESS': 'warning',
-      'READY': 'success',
-      'COMPLETED': 'medium',
+      'PRODUCTION': 'warning',
+      'SHIPPING': 'primary',
+      'READY_FOR_PICKUP': 'success',
+      'DELIVERED': 'success',
+      'FINISHED': 'medium',
       'CANCELLED': 'danger',
       'EXPIRED': 'dark'
     };
@@ -99,10 +101,11 @@ export class UserOrderDetailPage implements OnInit {
   getStatusIcon(status: RequestStatus): string {
     const icons: Record<RequestStatus, string> = {
       'OPEN': 'search',
-      'ACCEPTED': 'checkmark-circle',
-      'IN_PROGRESS': 'restaurant',
-      'READY': 'bag-check',
-      'COMPLETED': 'trophy',
+      'PRODUCTION': 'restaurant',
+      'SHIPPING': 'car',
+      'READY_FOR_PICKUP': 'bag-check',
+      'DELIVERED': 'checkmark-circle',
+      'FINISHED': 'trophy',
       'CANCELLED': 'close-circle',
       'EXPIRED': 'time'
     };
@@ -112,7 +115,7 @@ export class UserOrderDetailPage implements OnInit {
   isStatusActive(status: RequestStatus): boolean {
     if (!this.request) return false;
 
-    const statusOrder: RequestStatus[] = ['OPEN', 'ACCEPTED', 'IN_PROGRESS', 'READY', 'COMPLETED'];
+    const statusOrder: RequestStatus[] = ['OPEN', 'PRODUCTION', 'SHIPPING', 'READY_FOR_PICKUP', 'DELIVERED', 'FINISHED'];
     const currentIndex = statusOrder.indexOf(this.request.status);
     const checkIndex = statusOrder.indexOf(status);
 

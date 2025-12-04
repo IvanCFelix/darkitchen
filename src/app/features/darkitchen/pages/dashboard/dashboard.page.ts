@@ -6,7 +6,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { DarkitchenService } from '../../../../core/services/darkitchen.service';
 import { OrderService } from '../../../../core/services/order.service';
 import { ToastService } from '../../../../core/services/toast.service';
-import { Darkitchen, Order, OrderStatus } from '../../../../core/models';
+import { Darkitchen, Order, RequestStatus } from '../../../../core/models';
 
 @Component({
   selector: 'app-dashboard',
@@ -61,13 +61,22 @@ export class DashboardPage implements OnInit {
     if (!this.selectedDarkitchen) return;
 
     try {
-      this.activeOrders = await this.orderService.getActiveOrdersForDarkitchen(this.selectedDarkitchen.id).toPromise() || [];
+      const allOrders = await this.orderService.getActiveOrdersForDarkitchen(this.selectedDarkitchen.id).toPromise() || [];
+      this.activeOrders = allOrders.filter(order => order.status !== 'FINISHED');
+
+      this.activeOrders.map(order => {
+        this.orderService.getRequestById(order.requestId).subscribe(request => {
+          order.requestTitle = request ? request.title : 'Título no disponible';
+        });
+      });
+
+
     } catch (error) {
       console.error('Error loading orders:', error);
     }
   }
 
-  async updateOrderStatus(orderId: string, newStatus: OrderStatus): Promise<void> {
+  async updateOrderStatus(orderId: string, newStatus: RequestStatus): Promise<void> {
     const userId = this.authService.getCurrentUserId();
     if (!userId) return;
 
@@ -81,35 +90,40 @@ export class DashboardPage implements OnInit {
     }
   }
 
-  getNextStatus(currentStatus: OrderStatus): OrderStatus | null {
-    const statusFlow: Record<OrderStatus, OrderStatus | null> = {
+  getNextStatus(currentStatus: RequestStatus): RequestStatus | null {
+    const statusFlow: Partial<Record<RequestStatus, RequestStatus>> = {
       'PRODUCTION': 'SHIPPING',
       'SHIPPING': 'DELIVERED',
       'READY_FOR_PICKUP': 'DELIVERED',
-      'DELIVERED': 'FINISHED',
-      'FINISHED': null
+      'DELIVERED': 'FINISHED'
     };
-    return statusFlow[currentStatus];
+    return statusFlow[currentStatus] || null;
   }
 
-  getStatusText(status: OrderStatus): string {
-    const statusTexts: Record<OrderStatus, string> = {
+  getStatusText(status: RequestStatus): string {
+    const statusTexts: Record<RequestStatus, string> = {
+      'OPEN': 'Abierta',
       'PRODUCTION': 'En producción',
       'SHIPPING': 'En camino',
       'READY_FOR_PICKUP': 'Listo para recoger',
       'DELIVERED': 'Entregado',
-      'FINISHED': 'Finalizado'
+      'FINISHED': 'Finalizado',
+      'CANCELLED': 'Cancelada',
+      'EXPIRED': 'Expirada'
     };
     return statusTexts[status];
   }
 
-  getStatusColor(status: OrderStatus): string {
-    const colors: Record<OrderStatus, string> = {
+  getStatusColor(status: RequestStatus): string {
+    const colors: Record<RequestStatus, string> = {
+      'OPEN': 'primary',
       'PRODUCTION': 'warning',
       'SHIPPING': 'primary',
       'READY_FOR_PICKUP': 'success',
       'DELIVERED': 'success',
-      'FINISHED': 'medium'
+      'FINISHED': 'medium',
+      'CANCELLED': 'danger',
+      'EXPIRED': 'dark'
     };
     return colors[status];
   }
@@ -155,7 +169,7 @@ export class DashboardPage implements OnInit {
     }
   }
 
-  onSlideEnd(event: any, orderId: string, newStatus: OrderStatus): void {
+  onSlideEnd(event: any, orderId: string, newStatus: RequestStatus): void {
     const state = this.sliderStates.get(orderId);
     if (!state || !state.isDragging) return;
 

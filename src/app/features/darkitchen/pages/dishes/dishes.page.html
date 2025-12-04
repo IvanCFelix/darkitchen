@@ -4,11 +4,6 @@
             <ion-back-button defaultHref="/darkitchen/dashboard"></ion-back-button>
         </ion-buttons>
         <ion-title>Mis Platillos</ion-title>
-        <ion-buttons slot="end">
-            <ion-button>
-                <ion-icon name="search-outline"></ion-icon>
-            </ion-button>
-        </ion-buttons>
     </ion-toolbar>
 </ion-header>
 
@@ -17,31 +12,84 @@
         <!-- Header Section -->
         <div class="header-section">
             <h2>Menú Digital</h2>
-            <p>Administra tus platillos disponibles</p>
+            <p>{{ filteredDishes.length }} platillo{{ filteredDishes.length !== 1 ? 's' : '' }} disponible{{
+                filteredDishes.length !== 1 ? 's' : '' }}</p>
         </div>
 
         <!-- Filter Chips -->
-        <div class="filters-section">
-            <ion-chip outline>
-                <span>🔍</span>
+        <div class="filters-section" *ngIf="dishes.length > 0">
+            <ion-chip [class.active]="selectedFilter === 'all'" (click)="filterDishes('all')">
+                <span>🍽️</span>
                 <ion-label>Todos</ion-label>
             </ion-chip>
-            <ion-chip outline>
+            <ion-chip [class.active]="selectedFilter === 'pizza'" (click)="filterDishes('pizza')">
                 <span>🍕</span>
                 <ion-label>Pizzas</ion-label>
             </ion-chip>
-            <ion-chip outline>
+            <ion-chip [class.active]="selectedFilter === 'burger'" (click)="filterDishes('burger')">
                 <span>🍔</span>
                 <ion-label>Burgers</ion-label>
             </ion-chip>
-            <ion-chip outline>
+            <ion-chip [class.active]="selectedFilter === 'postre'" (click)="filterDishes('postre')">
                 <span>🍰</span>
                 <ion-label>Postres</ion-label>
             </ion-chip>
         </div>
 
+        <!-- Dishes List -->
+        <div class="dishes-list" *ngIf="filteredDishes.length > 0">
+            <div class="dish-card" *ngFor="let dish of filteredDishes">
+                <div class="dish-image-container">
+                    <img [src]="dish.images[0]" class="dish-image" *ngIf="dish.images!.length > 0" />
+                    <div class="image-placeholder" *ngIf="!dish.images || dish.images.length === 0">
+                        <ion-icon name="image-outline"></ion-icon>
+                    </div>
+                </div>
+
+                <div class="dish-content">
+                    <div class="dish-header">
+                        <h3>{{ dish.name }}</h3>
+                        <span class="price">${{ dish.price }}</span>
+                    </div>
+
+                    <p class="description">{{ dish.description }}</p>
+
+                    <div class="dish-tags" *ngIf="dish.tags!.length > 0">
+                        <ion-chip *ngFor="let tag of dish.tags!.slice(0, 3)" class="tag-chip">
+                            <ion-label>{{ tag }}</ion-label>
+                        </ion-chip>
+                    </div>
+
+                    <div class="dish-meta">
+                        <div class="meta-item">
+                            <ion-icon name="time-outline"></ion-icon>
+                            <span>{{ dish.preparationTime }} min</span>
+                        </div>
+                        <div class="meta-item" *ngIf="dish.available">
+                            <div class="status-dot available"></div>
+                            <span>Disponible</span>
+                        </div>
+                        <div class="meta-item" *ngIf="!dish.available">
+                            <div class="status-dot unavailable"></div>
+                            <span>No disponible</span>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <ion-button size="small" fill="outline" class="edit-btn">
+                            <ion-icon name="create-outline" slot="start"></ion-icon>
+                            Editar
+                        </ion-button>
+                        <ion-button size="small" fill="clear" color="danger" (click)="deleteDish(dish.id)">
+                            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                        </ion-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Empty State -->
-        <div class="empty-state">
+        <div class="empty-state" *ngIf="dishes.length === 0">
             <ion-icon name="restaurant-outline"></ion-icon>
             <h3>No tienes platillos aún</h3>
             <p>Agrega platillos a tu menú para empezar a vender</p>
@@ -50,45 +98,6 @@
                 Agregar Platillo
             </ion-button>
         </div>
-
-        <!-- Dishes List (when there are dishes) -->
-        <!-- <div class="dishes-list">
-            <ion-card *ngFor="let dish of dishes">
-                <img [src]="dish.images[0]" class="dish-image" *ngIf="dish.images?.length > 0" />
-                
-                <ion-card-header>
-                    <div class="dish-header">
-                        <ion-card-title>{{ dish.name }}</ion-card-title>
-                        <span class="price">${{ dish.price }}</span>
-                    </div>
-                </ion-card-header>
-
-                <ion-card-content>
-                    <p class="description">{{ dish.description }}</p>
-                    
-                    <div class="dish-meta">
-                        <div class="meta-item">
-                            <ion-icon name="time-outline"></ion-icon>
-                            <span>{{ dish.preparationTime }} min</span>
-                        </div>
-                        <div class="meta-item">
-                            <ion-icon name="star"></ion-icon>
-                            <span>{{ dish.rating }}</span>
-                        </div>
-                    </div>
-
-                    <div class="actions">
-                        <ion-button size="small" fill="outline">
-                            <ion-icon name="create-outline" slot="start"></ion-icon>
-                            Editar
-                        </ion-button>
-                        <ion-button size="small" fill="clear" color="danger">
-                            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
-                        </ion-button>
-                    </div>
-                </ion-card-content>
-            </ion-card>
-        </div> -->
     </div>
 
     <div class="loading-container" *ngIf="isLoading">
@@ -96,7 +105,7 @@
     </div>
 
     <!-- FAB Button -->
-    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="!isLoading">
         <ion-fab-button class="fab-button" routerLink="/darkitchen/dishes/create">
             <ion-icon name="add"></ion-icon>
         </ion-fab-button>

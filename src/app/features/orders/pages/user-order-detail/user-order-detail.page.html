@@ -89,7 +89,7 @@
 
             <!-- Status Timeline -->
             <div class="timeline-section">
-                <h2 class="section-title">Estado de la Solicitud</h2>
+                <h2 class="section-title">Estado del Pedido</h2>
 
                 <div class="timeline">
                     <div class="timeline-step" [class.completed]="isStatusActive('OPEN')">
@@ -102,43 +102,53 @@
                         </div>
                     </div>
 
-                    <div class="timeline-step" [class.completed]="isStatusActive('ACCEPTED')">
-                        <div class="step-marker">
-                            <ion-icon name="checkmark-circle"></ion-icon>
-                        </div>
-                        <div class="step-content">
-                            <h3>Aceptada</h3>
-                            <p>Una darkitchen aceptó tu solicitud</p>
-                        </div>
-                    </div>
-
-                    <div class="timeline-step" [class.completed]="isStatusActive('IN_PROGRESS')">
+                    <div class="timeline-step" [class.completed]="isStatusActive('PRODUCTION')">
                         <div class="step-marker">
                             <ion-icon name="restaurant"></ion-icon>
                         </div>
                         <div class="step-content">
-                            <h3>En Preparación</h3>
+                            <h3>En Producción</h3>
                             <p>Tu platillo está siendo preparado</p>
                         </div>
                     </div>
 
-                    <div class="timeline-step" [class.completed]="isStatusActive('READY')">
+                    <div class="timeline-step" [class.completed]="isStatusActive('SHIPPING')">
+                        <div class="step-marker">
+                            <ion-icon name="car"></ion-icon>
+                        </div>
+                        <div class="step-content">
+                            <h3>En Camino</h3>
+                            <p>Tu pedido está en camino</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-step" [class.completed]="isStatusActive('READY_FOR_PICKUP')">
                         <div class="step-marker">
                             <ion-icon name="bag-check"></ion-icon>
                         </div>
                         <div class="step-content">
-                            <h3>Listo</h3>
-                            <p>Tu pedido está listo</p>
+                            <h3>Listo para Recoger</h3>
+                            <p>Tu pedido está listo en el local</p>
                         </div>
                     </div>
 
-                    <div class="timeline-step" [class.completed]="isStatusActive('COMPLETED')">
+                    <div class="timeline-step" [class.completed]="isStatusActive('DELIVERED')">
+                        <div class="step-marker">
+                            <ion-icon name="checkmark-circle"></ion-icon>
+                        </div>
+                        <div class="step-content">
+                            <h3>Entregado</h3>
+                            <p>Tu pedido ha sido entregado</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-step" [class.completed]="isStatusActive('FINISHED')">
                         <div class="step-marker">
                             <ion-icon name="trophy"></ion-icon>
                         </div>
                         <div class="step-content">
-                            <h3>Completado</h3>
-                            <p>Solicitud completada exitosamente</p>
+                            <h3>Finalizado</h3>
+                            <p>Pedido completado exitosamente</p>
                         </div>
                     </div>
                 </div>

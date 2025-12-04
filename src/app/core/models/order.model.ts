@@ -1,8 +1,5 @@
 import { Timestamp } from '@angular/fire/firestore';
-import { PaymentMethod } from './request.model';
-
-export type OrderStatus =
-    'PRODUCTION' | 'SHIPPING' | 'READY_FOR_PICKUP' | 'DELIVERED' | 'FINISHED';
+import { PaymentMethod, RequestStatus } from './request.model';
 
 export type DeliveryType = 'DELIVERY' | 'PICKUP';
 
@@ -15,13 +12,14 @@ export interface PaymentSimulation {
 export interface Order {
     id: string;
     requestId: string;
+    requestTitle: string;
     dishId: string;
     darkitchenId: string;
     darkitchenOwnerId: string;
     userId: string;
     price: number;
     deliveryType: DeliveryType;
-    status: OrderStatus;
+    status: RequestStatus;
     createdAt: Timestamp;
     paymentSimulation?: PaymentSimulation;
 }

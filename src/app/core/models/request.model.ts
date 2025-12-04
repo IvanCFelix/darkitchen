@@ -2,7 +2,7 @@ import { Timestamp } from '@angular/fire/firestore';
 import { Address } from './address.model';
 
 export type PaymentMethod = 'CARD' | 'CASH' | 'TRANSFER';
-export type RequestStatus = 'OPEN' | 'ACCEPTED' | 'IN_PROGRESS' | 'READY' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED';
+export type RequestStatus = 'OPEN' | 'PRODUCTION' | 'SHIPPING' | 'READY_FOR_PICKUP' | 'DELIVERED' | 'FINISHED' | 'CANCELLED' | 'EXPIRED';
 
 export interface Request {
     id: string;

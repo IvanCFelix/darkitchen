@@ -15,7 +15,7 @@ import {
   orderBy
 } from '@angular/fire/firestore';
 import { Observable, from, map } from 'rxjs';
-import { Order, OrderStatus, OrderStatusHistory } from '../models';
+import { Order, RequestStatus, OrderStatusHistory } from '../models';
 
 @Injectable({
   providedIn: 'root'
@@ -55,17 +55,23 @@ export class OrderService {
     const q = query(
       this.ordersCollection,
       where('darkitchenId', '==', darkitchenId),
-      where('status', 'in', ['PRODUCTION', 'SHIPPING', 'READY_FOR_PICKUP', 'DELIVERED'])
     );
     return from(getDocs(q)).pipe(
       map(querySnapshot => querySnapshot.docs.map(doc => doc.data() as Order))
     );
   }
 
-  updateOrderStatus(orderId: string, status: OrderStatus, actorId: string): Observable<void> {
+  getRequestById(requestId: string): Observable<any> {
+    const requestDoc = doc(this.firestore, `requests/${requestId}`);
+    return from(getDoc(requestDoc)).pipe(
+      map(docSnap => docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } : null)
+    );
+  }
+
+  updateOrderStatus(orderId: string, status: RequestStatus, actorId: string): Observable<void> {
     const orderDoc = doc(this.firestore, `orders/${orderId}`);
     const historyDoc = doc(this.historyCollection);
-    
+
     const historyEntry: OrderStatusHistory = {
       id: historyDoc.id,
       orderId,

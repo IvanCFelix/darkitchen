@@ -6,7 +6,17 @@ export type AppMode = 'user' | 'darkitchen';
     providedIn: 'root'
 })
 export class AppModeService {
-    private modeSignal = signal<AppMode>('user');
+    private readonly STORAGE_KEY = 'darkitchen_app_mode';
+    private modeSignal = signal<AppMode>(this.loadModeFromStorage());
+
+    private loadModeFromStorage(): AppMode {
+        const savedMode = localStorage.getItem(this.STORAGE_KEY);
+        return (savedMode === 'darkitchen' || savedMode === 'user') ? savedMode : 'user';
+    }
+
+    private saveModeToStorage(mode: AppMode): void {
+        localStorage.setItem(this.STORAGE_KEY, mode);
+    }
 
     get mode() {
         return this.modeSignal();
@@ -21,11 +31,14 @@ export class AppModeService {
     }
 
     toggleMode(): void {
-        this.modeSignal.set(this.modeSignal() === 'user' ? 'darkitchen' : 'user');
+        const newMode = this.modeSignal() === 'user' ? 'darkitchen' : 'user';
+        this.modeSignal.set(newMode);
+        this.saveModeToStorage(newMode);
     }
 
     setMode(mode: AppMode): void {
         this.modeSignal.set(mode);
+        this.saveModeToStorage(mode);
     }
 
     getModeSignal() {
