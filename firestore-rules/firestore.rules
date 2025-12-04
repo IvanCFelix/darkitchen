@@ -1,0 +1,109 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getUserId() {
+      return request.auth.uid;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && getUserId() == userId;
+    }
+    
+    function isDarkitchenOwner(darkitchenId) {
+      return isAuthenticated() && 
+             get(/databases/$(database)/documents/darkitchens/$(darkitchenId)).data.ownerId == getUserId();
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      // Users can only read and write their own document
+      allow read, write: if isOwner(userId);
+    }
+    
+    // Darkitchens collection
+    match /darkitchens/{darkitchenId} {
+      // Anyone authenticated can read darkitchens
+      allow read: if isAuthenticated();
+      
+      // Only the owner can create (with ownerId == auth.uid)
+      allow create: if isAuthenticated() && 
+                       request.resource.data.ownerId == getUserId();
+      
+      // Only the owner can update or delete
+      allow update, delete: if isDarkitchenOwner(darkitchenId);
+    }
+    
+    // Dishes collection
+    match /dishes/{dishId} {
+      // Anyone authenticated can read dishes
+      allow read: if isAuthenticated();
+      
+      // Only darkitchen owners can create dishes for their darkitchen
+      allow create: if isAuthenticated() && 
+                       isDarkitchenOwner(request.resource.data.darkitchenId);
+      
+      // Only darkitchen owners can update/delete their dishes
+      allow update, delete: if isAuthenticated() && 
+                               isDarkitchenOwner(resource.data.darkitchenId);
+    }
+    
+    // Requests collection
+    match /requests/{requestId} {
+      // Anyone authenticated can read OPEN requests
+      allow read: if isAuthenticated();
+      
+      // Only authenticated users can create requests (with userId == auth.uid)
+      allow create: if isAuthenticated() && 
+                       request.resource.data.userId == getUserId() &&
+                       request.resource.data.status == 'OPEN';
+      
+      // Only the owner can cancel their request
+      allow update: if isAuthenticated() && 
+                       resource.data.userId == getUserId() &&
+                       request.resource.data.status == 'CANCELLED';
+      
+      // Darkitchen owners cannot directly update request status to ACCEPTED
+      // This must be done through Cloud Function for validation
+      allow delete: if false; // Requests should not be deleted
+    }
+    
+    // Orders collection
+    match /orders/{orderId} {
+      // Users can read their own orders
+      // Darkitchen owners can read orders for their darkitchen
+      allow read: if isAuthenticated() && 
+                     (resource.data.userId == getUserId() || 
+                      resource.data.darkitchenOwnerId == getUserId());
+      
+      // Orders are created only by Cloud Functions
+      allow create: if false;
+      
+      // Only darkitchen owner can update order status
+      allow update: if isAuthenticated() && 
+                       resource.data.darkitchenOwnerId == getUserId() &&
+                       request.resource.data.keys().hasOnly(['status']) &&
+                       request.resource.data.status in ['PRODUCTION', 'SHIPPING', 'READY_FOR_PICKUP', 'DELIVERED', 'FINISHED'];
+      
+      // Orders should not be deleted
+      allow delete: if false;
+    }
+    
+    // Order Status History collection
+    match /orderStatusHistory/{historyId} {
+      // Users and darkitchen owners can read history for their orders
+      allow read: if isAuthenticated();
+      
+      // History entries are created by Cloud Functions or order updates
+      allow create: if isAuthenticated();
+      
+      // History should not be updated or deleted
+      allow update, delete: if false;
+    }
+  }
+}

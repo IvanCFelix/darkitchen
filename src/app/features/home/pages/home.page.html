@@ -1,0 +1,143 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-button style="font-weight: bold" (click)="toggleMode()" class="mode-toggle">
+                <ion-icon [name]="appModeService.isDarkitchenMode ? 'person-outline' : 'restaurant-outline'"
+                    class="ion-margin-end"></ion-icon>
+                <ion-label>{{ appModeService.isDarkitchenMode ? 'Modo Usuario' : 'Modo Darkitchen'
+                    }}</ion-label>
+            </ion-button>
+            <!--  <ion-button (click)="navigateToProfile()">
+                <ion-icon name="person-circle-outline"></ion-icon>
+            </ion-button> -->
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <div class="home-container" *ngIf="!isLoading">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h1>¡Hola, {{ user?.displayName || 'Usuario' }}!</h1>
+            <p class="welcome-question" *ngIf="appModeService.isUserMode">¿Qué te gustaría comer hoy?</p>
+            <p class="welcome-question" *ngIf="appModeService.isDarkitchenMode">¿Qué solicitud quieres aceptar?</p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-section">
+            <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="filterContent()"
+                [placeholder]="appModeService.isUserMode ? 'Buscar platillos...' : 'Buscar solicitudes...'" animated>
+            </ion-searchbar>
+        </div>
+
+        <!-- Categories Filter - Solo modo usuario -->
+        <div class="categories-section" *ngIf="appModeService.isUserMode">
+            <div class="categories-scroll">
+                <ion-chip *ngFor="let cat of categories" [class.active]="selectedCategory === cat.name"
+                    (click)="selectCategory(cat.name)">
+                    <span class="category-icon">{{ cat.icon }}</span>
+                    <ion-label>{{ cat.name }}</ion-label>
+                </ion-chip>
+            </div>
+        </div>
+
+        <!-- Dishes Grid - Solo modo usuario -->
+        <div class="dishes-grid" *ngIf="appModeService.isUserMode">
+            <ion-card *ngFor="let dish of filteredDishes" class="dish-card" button (click)="viewDishDetail(dish)">
+
+                <div class="dish-image-container">
+                    <img [src]="dish.images[0]" [alt]="dish.name" class="dish-image" />
+                    <div class="dish-badge" *ngIf="dish.available">
+                        <ion-badge color="success">Disponible</ion-badge>
+                    </div>
+                    <div class="rating-badge">
+                        <ion-icon name="star" class="star-icon"></ion-icon>
+                        <span>{{ dish.rating }}</span>
+                    </div>
+                </div>
+
+                <ion-card-content>
+                    <div class="dish-header">
+                        <h3>{{ dish.name }}</h3>
+                        <span class="price">${{ dish.price }}</span>
+                    </div>
+
+                    <p class="description">{{ dish.description }}</p>
+
+                    <div class="dish-meta">
+                        <div class="meta-item">
+                            <ion-icon name="time-outline"></ion-icon>
+                            <span>{{ dish.preparationTime }} min</span>
+                        </div>
+                        <div class="meta-item">
+                            <ion-icon name="location-outline"></ion-icon>
+                            <span>{{ dish.restaurantName || 'DarKitchen' }}</span>
+                        </div>
+                    </div>
+
+                    <ion-button expand="block" class="add-button">
+                        <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+                        Agregar
+                    </ion-button>
+                </ion-card-content>
+            </ion-card>
+        </div>
+
+        <!-- Requests List - Solo modo darkitchen -->
+        <div class="requests-list" *ngIf="appModeService.isDarkitchenMode">
+            <ion-card *ngFor="let request of filteredRequests" class="request-card" button
+                (click)="viewRequestDetail(request)">
+                <ion-card-header>
+                    <div class="request-header">
+                        <ion-card-title>{{ request.title }}</ion-card-title>
+                        <ion-badge color="warning">
+                            {{ getTimeRemaining(request) }}
+                        </ion-badge>
+                    </div>
+                </ion-card-header>
+
+                <ion-card-content>
+                    <p *ngIf="request.description" class="description">
+                        {{ request.description }}
+                    </p>
+
+                    <div class="keywords">
+                        <ion-chip *ngFor="let keyword of request.keywords" outline>
+                            <span class="keyword-icon">🏷️</span>
+                            <ion-label>{{ keyword }}</ion-label>
+                        </ion-chip>
+                    </div>
+
+                    <div class="request-info">
+                        <div class="info-item">
+                            <ion-icon name="location-outline"></ion-icon>
+                            <span>{{ request.address.city }}, {{ request.address.state }}</span>
+                        </div>
+                        <div class="info-item">
+                            <ion-icon name="card-outline"></ion-icon>
+                            <span>{{ request.paymentMethod }}</span>
+                        </div>
+                    </div>
+
+                    <ion-button expand="block" class="accept-button">
+                        Aceptar Solicitud
+                    </ion-button>
+                </ion-card-content>
+            </ion-card>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state"
+            *ngIf="(appModeService.isUserMode && filteredDishes.length === 0) || (appModeService.isDarkitchenMode && filteredRequests.length === 0)">
+            <ion-icon [name]="appModeService.isUserMode ? 'restaurant-outline' : 'receipt-outline'"></ion-icon>
+            <h3>{{ appModeService.isUserMode ? 'No hay platillos disponibles' : 'No hay solicitudes disponibles' }}</h3>
+            <p>{{ appModeService.isUserMode ? 'Intenta buscar algo diferente' : 'No se encontraron solicitudes abiertas'
+                }}</p>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading">
+        <ion-spinner name="crescent"></ion-spinner>
+    </div>
+</ion-content>

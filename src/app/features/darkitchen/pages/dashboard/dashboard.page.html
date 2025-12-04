@@ -1,0 +1,87 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/home"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Dashboard Darkitchen</ion-title>
+        <ion-buttons slot="end">
+            <ion-button (click)="navigateToDishes()">
+                <ion-icon name="restaurant-outline"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <div *ngIf="!isLoading">
+        <!-- Darkitchen Info -->
+        <div class="darkitchen-header ion-padding">
+            <h2>{{ selectedDarkitchen?.name }}</h2>
+            <p *ngIf="selectedDarkitchen?.description">{{ selectedDarkitchen!.description }}</p>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <ion-icon name="star" class="gold-icon"></ion-icon>
+                    <span>{{ selectedDarkitchen?.rating || 0 }}</span>
+                </div>
+                <div class="stat-item">
+                    <ion-icon name="receipt-outline"></ion-icon>
+                    <span>{{ activeOrders.length }} activos</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions ion-padding">
+            <ion-button expand="block" (click)="navigateToSearchRequests()" class="golden-button">
+                <ion-icon name="search" slot="start"></ion-icon>
+                Buscar Solicitudes
+            </ion-button>
+        </div>
+
+        <!-- Active Orders -->
+        <div class="orders-section">
+            <h3 class="ion-padding-horizontal">Pedidos Activos</h3>
+
+            <ion-card *ngFor="let order of activeOrders">
+                <ion-card-header>
+                    <div class="order-header">
+                        <ion-badge [color]="getStatusColor(order.status)">
+                            {{ getStatusText(order.status) }}
+                        </ion-badge>
+                        <span class="order-price">${{ order.price }}</span>
+                    </div>
+                </ion-card-header>
+
+                <ion-card-content>
+                    <div class="order-info">
+                        <p><strong>Tipo:</strong> {{ order.deliveryType === 'DELIVERY' ? 'Entrega' : 'Recoger' }}</p>
+                        <p><strong>ID:</strong> {{ order.id.substring(0, 8) }}</p>
+                    </div>
+
+                    <ion-button *ngIf="getNextStatus(order.status)" expand="block" size="small"
+                        (click)="updateOrderStatus(order.id, getNextStatus(order.status)!)">
+                        Marcar como {{ getStatusText(getNextStatus(order.status)!) }}
+                    </ion-button>
+                </ion-card-content>
+            </ion-card>
+
+            <div class="empty-state" *ngIf="activeOrders.length === 0">
+                <ion-icon name="basket-outline"></ion-icon>
+                <h3>No hay pedidos activos</h3>
+                <p>Busca solicitudes abiertas para empezar a vender</p>
+            </div>
+        </div>
+
+        <!-- FAB Button -->
+        <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+            <ion-fab-button (click)="navigateToSearchRequests()" color="warning">
+                <ion-icon name="add"></ion-icon>
+            </ion-fab-button>
+        </ion-fab>
+    </div>
+
+    <div class="loading-container" *ngIf="isLoading">
+        <ion-spinner name="crescent"></ion-spinner>
+    </div>
+</ion-content>

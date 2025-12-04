@@ -1,0 +1,140 @@
+.darkitchen-header {
+  background: linear-gradient(135deg, var(--gold) 0%, #c9a633 100%);
+  color: #000;
+  padding: 32px 16px;
+  border-radius: 0 0 24px 24px;
+  margin-bottom: 16px;
+
+  h2 {
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+
+  p {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-bottom: 16px;
+  }
+
+  .stats {
+    display: flex;
+    gap: 24px;
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      background: rgba(0, 0, 0, 0.1);
+      padding: 8px 12px;
+      border-radius: 12px;
+
+      ion-icon {
+        font-size: 20px;
+
+        &.gold-icon {
+          color: #ffd700;
+        }
+      }
+    }
+  }
+}
+
+.quick-actions {
+  padding: 0 16px 16px;
+
+  .golden-button {
+    --background: var(--gold);
+    --color: #000;
+    --border-radius: 12px;
+    font-weight: 600;
+    height: 48px;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+  }
+}
+
+.orders-section {
+  padding: 16px;
+
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--ion-text-color);
+  }
+
+  ion-card {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    background: var(--ion-card-background);
+    border-radius: 16px;
+    margin-bottom: 12px;
+
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+
+      .order-price {
+        font-size: 22px;
+        font-weight: bold;
+        color: var(--gold);
+      }
+    }
+
+    .order-info {
+      margin-bottom: 16px;
+
+      p {
+        margin: 6px 0;
+        font-size: 14px;
+        color: var(--ion-color-medium);
+
+        strong {
+          color: var(--ion-text-color);
+          font-weight: 600;
+        }
+      }
+    }
+
+    ion-button {
+      --border-radius: 10px;
+      font-weight: 600;
+      height: 40px;
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--ion-color-medium);
+
+    ion-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      color: var(--ion-color-step-400);
+    }
+
+    h3 {
+      font-size: 20px;
+      margin-bottom: 8px;
+      color: var(--ion-text-color);
+    }
+
+    p {
+      font-size: 14px;
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+
+  ion-spinner {
+    color: var(--gold);
+  }
+}

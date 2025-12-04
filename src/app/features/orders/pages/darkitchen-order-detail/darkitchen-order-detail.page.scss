@@ -1,0 +1,94 @@
+.order-header {
+  background: linear-gradient(135deg, var(--gold) 0%, #c9a633 100%);
+  color: #000;
+  text-align: center;
+  padding: 32px 20px;
+  border-radius: 0 0 24px 24px;
+
+  h2 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+
+  .price {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+
+  .delivery-type {
+    font-size: 14px;
+    opacity: 0.9;
+  }
+}
+
+.control-section {
+  padding: 24px 16px;
+
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--ion-text-color);
+  }
+
+  .status-buttons {
+    display: grid;
+    gap: 12px;
+
+    ion-button {
+      --border-radius: 12px;
+      font-weight: 600;
+      height: 48px;
+    }
+  }
+}
+
+.info-section {
+  padding: 24px 16px;
+  background: var(--ion-card-background);
+  border-radius: 16px;
+  margin: 16px;
+
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--ion-text-color);
+  }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--ion-border-color, var(--ion-color-step-150));
+    }
+
+    .label {
+      color: var(--ion-color-medium);
+      font-size: 14px;
+    }
+
+    .value {
+      color: var(--ion-text-color);
+      font-weight: 500;
+      font-size: 14px;
+      text-align: right;
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+
+  ion-spinner {
+    color: var(--gold);
+  }
+}

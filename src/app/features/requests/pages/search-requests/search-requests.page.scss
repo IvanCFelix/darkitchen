@@ -1,0 +1,222 @@
+ion-toolbar {
+  ion-searchbar {
+    --background: var(--ion-color-step-100);
+    --color: var(--ion-text-color);
+    --placeholder-color: var(--ion-color-step-600);
+    --icon-color: var(--ion-color-step-600);
+    --border-radius: 12px;
+  }
+}
+
+.darkitchen-selector {
+  background: var(--ion-card-background);
+  border-bottom: 1px solid var(--ion-border-color, var(--ion-color-step-150));
+  padding: 12px 0;
+
+  ion-segment {
+    --background: var(--ion-color-step-100);
+    border-radius: 12px;
+    padding: 4px;
+
+    ion-segment-button {
+      --color: var(--ion-text-color);
+      --color-checked: #000;
+      --indicator-color: var(--gold);
+      --indicator-height: 100%;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+  }
+}
+
+.requests-list {
+  padding: 16px;
+
+  ion-card {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    background: var(--ion-card-background);
+    border-radius: 16px;
+    margin-bottom: 16px;
+    transition: transform 0.2s;
+
+    &:active {
+      transform: scale(0.98);
+    }
+
+    .request-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+
+      ion-card-title {
+        font-size: 18px;
+        flex: 1;
+        color: var(--ion-text-color);
+        font-weight: 600;
+      }
+
+      ion-badge {
+        flex-shrink: 0;
+        --background: rgba(255, 193, 7, 0.15);
+        --color: #f57c00;
+        padding: 6px 12px;
+        border-radius: 12px;
+        font-weight: 600;
+      }
+    }
+
+    .description {
+      color: var(--ion-color-medium);
+      margin-bottom: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .keywords {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+
+      ion-chip {
+        --background: var(--ion-color-step-100);
+        --color: var(--ion-text-color);
+        border-radius: 16px;
+        height: 32px;
+        font-size: 13px;
+        flex-shrink: 0;
+        max-width: 100%;
+
+        .keyword-icon {
+          font-size: 16px;
+          margin-right: 4px;
+        }
+
+        ion-label {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 150px;
+          display: inline-block;
+        }
+      }
+    }
+
+    .request-info {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+
+      .info-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+        color: var(--ion-color-medium);
+
+        ion-icon {
+          font-size: 18px;
+          color: var(--ion-color-step-600);
+        }
+      }
+    }
+
+    .accept-button {
+      --background: var(--gold);
+      --color: #000;
+      --border-radius: 12px;
+      font-weight: 600;
+      height: 48px;
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--ion-color-medium);
+
+    ion-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+      color: var(--ion-color-step-400);
+    }
+
+    h3 {
+      font-size: 22px;
+      margin-bottom: 8px;
+      color: var(--ion-text-color);
+      font-weight: 600;
+    }
+
+    p {
+      font-size: 14px;
+      line-height: 1.5;
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+
+  ion-spinner {
+    color: var(--gold);
+  }
+}
+
+.request-info {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: var(--ion-color-medium);
+
+    ion-icon {
+      font-size: 18px;
+    }
+  }
+}
+
+.accept-button {
+  --background: var(--gold);
+  --color: #000;
+  font-weight: 600;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--ion-color-medium);
+
+  ion-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  p {
+    font-size: 14px;
+  }
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}

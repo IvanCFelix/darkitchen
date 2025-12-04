@@ -1,0 +1,78 @@
+.register-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding-top: 60px;
+
+  .logo-section {
+    text-align: center;
+    margin-bottom: 40px;
+
+    h1 {
+      font-size: 32px;
+      font-weight: bold;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: var(--ion-color-medium);
+      font-size: 14px;
+    }
+  }
+
+  ion-list {
+    background: transparent;
+
+    ion-item {
+      --background: var(--ion-card-background, #fff);
+      --border-radius: 8px;
+      margin-bottom: 4px;
+      --padding-start: 16px;
+      --color: var(--ion-text-color);
+
+      &.ion-invalid.ion-touched {
+        --border-color: var(--ion-color-danger);
+        --highlight-color-focused: var(--ion-color-danger);
+      }
+
+      ion-input {
+        --color: var(--ion-text-color);
+        --placeholder-color: var(--ion-color-step-600);
+      }
+    }
+  }
+
+  .error-text {
+    display: block;
+    padding-left: 16px;
+    margin-top: 4px;
+    margin-bottom: 12px;
+    font-size: 12px;
+
+    small {
+      display: block;
+    }
+  }
+
+  .golden-button {
+    --background: var(--gold);
+    --background-hover: var(--gold-dark);
+    --color: #000;
+    font-weight: 600;
+  }
+
+  .login-link {
+    text-align: center;
+    margin-top: 24px;
+
+    p {
+      color: var(--ion-color-medium);
+
+      a {
+        color: var(--gold);
+        text-decoration: none;
+        font-weight: 600;
+      }
+    }
+  }
+}

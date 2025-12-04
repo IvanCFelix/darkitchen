@@ -1,0 +1,52 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/home"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Crear Darkitchen</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+    <div class="intro-section">
+        <h2>Crea tu cocina virtual</h2>
+        <p>Administra tu negocio y responde solicitudes de clientes</p>
+    </div>
+
+    <form [formGroup]="darkitchenForm" (ngSubmit)="onSubmit()">
+        <ion-list lines="none">
+            <ion-item>
+                <ion-input formControlName="name" label="Nombre del negocio" labelPlacement="floating"
+                    placeholder="Ej: La Cocina de María" [clearInput]="true" errorText="El nombre es obligatorio">
+                </ion-input>
+            </ion-item>
+            <ion-text color="danger" class="error-text"
+                *ngIf="darkitchenForm.get('name')?.invalid && darkitchenForm.get('name')?.touched">
+                <small>El nombre del negocio es obligatorio</small>
+            </ion-text>
+
+            <ion-item>
+                <ion-textarea formControlName="description" label="Descripción (opcional)" labelPlacement="floating"
+                    placeholder="Describe tu cocina..." rows="4">
+                </ion-textarea>
+            </ion-item>
+
+            <ion-item>
+                <ion-toggle formControlName="deliveryEnabled" labelPlacement="start">
+                    Habilitar entrega a domicilio
+                </ion-toggle>
+            </ion-item>
+
+            <ion-item>
+                <ion-toggle formControlName="pickupEnabled" labelPlacement="start">
+                    Habilitar recolección
+                </ion-toggle>
+            </ion-item>
+        </ion-list>
+
+        <ion-button expand="block" type="submit" [disabled]="darkitchenForm.invalid || isLoading" class="submit-button">
+            <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+            <span *ngIf="!isLoading">Crear Darkitchen</span>
+        </ion-button>
+    </form>
+</ion-content>

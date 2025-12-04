@@ -1,0 +1,77 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/home"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Solicitudes Abiertas</ion-title>
+    </ion-toolbar>
+    <ion-toolbar>
+        <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="onSearchChange()"
+            placeholder="Buscar por título o palabra clave" animated></ion-searchbar>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <div *ngIf="!isLoading">
+        <!-- Darkitchen Selector -->
+        <div class="darkitchen-selector ion-padding" *ngIf="myDarkitchens.length > 1">
+            <ion-segment [(ngModel)]="selectedDarkitchen" (ionChange)="loadDishes()">
+                <ion-segment-button *ngFor="let dk of myDarkitchens" [value]="dk">
+                    {{ dk.name }}
+                </ion-segment-button>
+            </ion-segment>
+        </div>
+
+        <!-- Requests List -->
+        <div class="requests-list">
+            <ion-card *ngFor="let request of filteredRequests">
+                <ion-card-header>
+                    <div class="request-header">
+                        <ion-card-title>{{ request.title }}</ion-card-title>
+                        <ion-badge color="warning">
+                            {{ getTimeRemaining(request) }}
+                        </ion-badge>
+                    </div>
+                </ion-card-header>
+
+                <ion-card-content>
+                    <p *ngIf="request.description" class="description">
+                        {{ request.description }}
+                    </p>
+
+                    <div class="keywords">
+                        <ion-chip *ngFor="let keyword of request.keywords" outline>
+                            <span class="keyword-icon">🏷️</span>
+                            <ion-label>{{ keyword }}</ion-label>
+                        </ion-chip>
+                    </div>
+
+                    <div class="request-info">
+                        <div class="info-item">
+                            <ion-icon name="location-outline"></ion-icon>
+                            <span>{{ request.address.city }}, {{ request.address.state }}</span>
+                        </div>
+                        <div class="info-item">
+                            <ion-icon name="card-outline"></ion-icon>
+                            <span>{{ request.paymentMethod }}</span>
+                        </div>
+                    </div>
+
+                    <ion-button expand="block" (click)="onAcceptRequest(request)" class="accept-button">
+                        Aceptar Solicitud
+                    </ion-button>
+                </ion-card-content>
+            </ion-card>
+
+            <div class="empty-state" *ngIf="filteredRequests.length === 0">
+                <ion-icon name="search-outline"></ion-icon>
+                <h3>No hay solicitudes disponibles</h3>
+                <p>No se encontraron solicitudes que coincidan con tu búsqueda</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading-container" *ngIf="isLoading">
+        <ion-spinner name="crescent"></ion-spinner>
+    </div>
+</ion-content>

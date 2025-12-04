@@ -1,0 +1,13 @@
+# DarKitchen Firebase Ignore
+.git
+.vscode
+node_modules
+src
+functions/node_modules
+functions/src
+*.ts
+!functions/lib/**/*.js
+tsconfig.json
+angular.json
+package-lock.json
+README.md

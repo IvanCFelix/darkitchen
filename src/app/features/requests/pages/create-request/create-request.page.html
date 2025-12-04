@@ -1,0 +1,114 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/home"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Crear Solicitud</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+    <form [formGroup]="requestForm" (ngSubmit)="onSubmit()">
+        <!-- Request Details -->
+        <div class="section">
+            <h3>Detalles de la Solicitud</h3>
+
+            <ion-item>
+                <ion-input formControlName="title" label="Título" labelPlacement="floating"
+                    placeholder="Ej: Pizza margarita grande" [clearInput]="true" errorText="El título es obligatorio">
+                </ion-input>
+            </ion-item>
+            <ion-text color="danger" class="error-text"
+                *ngIf="requestForm.get('title')?.invalid && requestForm.get('title')?.touched">
+                <small>El título es obligatorio</small>
+            </ion-text>
+
+            <ion-item>
+                <ion-textarea formControlName="description" label="Descripción (opcional)" labelPlacement="floating"
+                    placeholder="Detalles adicionales..." rows="3">
+                </ion-textarea>
+            </ion-item>
+
+            <ion-item>
+                <ion-input formControlName="keywords" label="Palabras clave" labelPlacement="floating"
+                    placeholder="pizza, margarita, italiana" [clearInput]="true"
+                    errorText="Las palabras clave son obligatorias">
+                </ion-input>
+            </ion-item>
+            <ion-text color="danger" class="error-text"
+                *ngIf="requestForm.get('keywords')?.invalid && requestForm.get('keywords')?.touched">
+                <small>Ingresa al menos una palabra clave (separadas por comas)</small>
+            </ion-text>
+            <ion-note class="helper-text">Separa las palabras clave con comas</ion-note>
+        </div>
+
+        <!-- Address -->
+        <div class="section">
+            <h3>Dirección de Entrega</h3>
+
+            <div class="address-grid">
+                <ion-item class="street-item">
+                    <ion-input formControlName="street" label="Calle" labelPlacement="floating"
+                        placeholder="Nombre de la calle" errorText="La calle es obligatoria">
+                    </ion-input>
+                </ion-item>
+
+                <ion-item class="number-item">
+                    <ion-input formControlName="number" label="Número" labelPlacement="floating" placeholder="123"
+                        errorText="El número es obligatorio">
+                    </ion-input>
+                </ion-item>
+            </div>
+
+            <ion-item>
+                <ion-input formControlName="city" label="Ciudad" labelPlacement="floating" placeholder="Ciudad"
+                    errorText="La ciudad es obligatoria">
+                </ion-input>
+            </ion-item>
+
+            <div class="address-grid">
+                <ion-item>
+                    <ion-input formControlName="state" label="Estado" labelPlacement="floating" placeholder="Estado"
+                        errorText="El estado es obligatorio">
+                    </ion-input>
+                </ion-item>
+
+                <ion-item>
+                    <ion-input formControlName="zipCode" label="Código Postal" labelPlacement="floating"
+                        placeholder="12345" errorText="El código postal es obligatorio">
+                    </ion-input>
+                </ion-item>
+            </div>
+
+            <ion-item>
+                <ion-input formControlName="additionalInfo" label="Información adicional (opcional)"
+                    labelPlacement="floating" placeholder="Depto, referencias, etc.">
+                </ion-input>
+            </ion-item>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="section">
+            <h3>Método de Pago</h3>
+
+            <ion-radio-group formControlName="paymentMethod">
+                <ion-item *ngFor="let method of paymentMethods">
+                    <ion-radio [value]="method.value" labelPlacement="end">
+                        {{ method.label }}
+                    </ion-radio>
+                </ion-item>
+            </ion-radio-group>
+        </div>
+
+        <!-- Submit Button -->
+        <ion-button expand="block" type="submit" [disabled]="isLoading" class="submit-button">
+            <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+            <span *ngIf="!isLoading">Crear Solicitud</span>
+        </ion-button>
+
+        <p class="expiration-notice">
+            <ion-icon name="time-outline"></ion-icon>
+            La solicitud expirará automáticamente en 10 minutos
+        </p>
+    </form>
+</ion-content>

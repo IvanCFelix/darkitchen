@@ -1,0 +1,61 @@
+<ion-content class="ion-padding">
+    <div class="login-container">
+        <div class="logo-section">
+            <h1>DarKitchen</h1>
+            <p>Tu cocina, tu negocio</p>
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+            <ion-list lines="none" class="ion-margin-bottom">
+                <ion-item class="ion-margin-bottom">
+                    <ion-input type="email" formControlName="email" label="Correo electrónico" labelPlacement="floating"
+                        placeholder="ejemplo@correo.com" [clearInput]="true"
+                        errorText="Por favor ingresa un correo válido">
+                    </ion-input>
+                </ion-item>
+                <ion-text color="danger" class="error-text"
+                    *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+                    <small *ngIf="loginForm.get('email')?.hasError('required')">
+                        El correo electrónico es obligatorio
+                    </small>
+                    <small *ngIf="loginForm.get('email')?.hasError('email')">
+                        Ingresa un correo electrónico válido
+                    </small>
+                </ion-text>
+
+                <ion-item class="ion-margin-top">
+                    <ion-input type="password" formControlName="password" label="Contraseña" labelPlacement="floating"
+                        placeholder="Mínimo 6 caracteres" [clearInput]="true" errorText="La contraseña es obligatoria">
+                    </ion-input>
+                </ion-item>
+                <ion-text color="danger" class="error-text"
+                    *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+                    <small *ngIf="loginForm.get('password')?.hasError('required')">
+                        La contraseña es obligatoria
+                    </small>
+                    <small *ngIf="loginForm.get('password')?.hasError('minlength')">
+                        La contraseña debe tener al menos 6 caracteres
+                    </small>
+                </ion-text>
+            </ion-list>
+
+            <ion-button expand="block" type="submit" [disabled]="loginForm.invalid || isLoading"
+                class="ion-margin-top golden-button">
+                <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+                <span *ngIf="!isLoading">Iniciar Sesión</span>
+            </ion-button>
+        </form>
+
+        <ion-button expand="block" fill="outline" (click)="onGoogleLogin()" [disabled]="isLoading"
+            class="ion-margin-top">
+            Continuar con Google
+        </ion-button>
+
+        <div class="register-link">
+            <p>
+                ¿No tienes cuenta?
+                <a routerLink="/auth/register">Regístrate</a>
+            </p>
+        </div>
+    </div>
+</ion-content>

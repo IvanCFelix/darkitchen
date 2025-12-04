@@ -1,0 +1,98 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/home"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Detalle del Pedido</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <div *ngIf="!isLoading && order">
+        <!-- Order Header -->
+        <div class="order-header ion-padding">
+            <h2>Pedido #{{ order.id.substring(0, 8) }}</h2>
+            <div class="price">${{ order.price }}</div>
+            <p class="delivery-type">
+                {{ order.deliveryType === 'DELIVERY' ? 'Entrega a domicilio' : 'Recoger en local' }}
+            </p>
+        </div>
+
+        <!-- Order Progress -->
+        <div class="progress-section ion-padding">
+            <h3>Estado del Pedido</h3>
+
+            <div class="timeline">
+                <div class="timeline-item" [class.active]="isStatusActive('PRODUCTION')">
+                    <div class="icon-wrapper">
+                        <ion-icon [name]="getStatusIcon('PRODUCTION')"></ion-icon>
+                    </div>
+                    <div class="content">
+                        <h4>{{ getStatusText('PRODUCTION') }}</h4>
+                        <p>Tu pedido está siendo preparado</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item"
+                    [class.active]="isStatusActive(order.deliveryType === 'DELIVERY' ? 'SHIPPING' : 'READY_FOR_PICKUP')"
+                    *ngIf="order.deliveryType === 'DELIVERY' || order.status === 'READY_FOR_PICKUP'">
+                    <div class="icon-wrapper">
+                        <ion-icon
+                            [name]="getStatusIcon(order.deliveryType === 'DELIVERY' ? 'SHIPPING' : 'READY_FOR_PICKUP')"></ion-icon>
+                    </div>
+                    <div class="content">
+                        <h4>{{ getStatusText(order.deliveryType === 'DELIVERY' ? 'SHIPPING' : 'READY_FOR_PICKUP') }}
+                        </h4>
+                        <p>{{ order.deliveryType === 'DELIVERY' ? 'En camino a tu dirección' : 'Puedes recoger tu
+                            pedido' }}</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item" [class.active]="isStatusActive('DELIVERED')">
+                    <div class="icon-wrapper">
+                        <ion-icon [name]="getStatusIcon('DELIVERED')"></ion-icon>
+                    </div>
+                    <div class="content">
+                        <h4>{{ getStatusText('DELIVERED') }}</h4>
+                        <p>Pedido entregado</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item" [class.active]="isStatusActive('FINISHED')">
+                    <div class="icon-wrapper">
+                        <ion-icon [name]="getStatusIcon('FINISHED')"></ion-icon>
+                    </div>
+                    <div class="content">
+                        <h4>{{ getStatusText('FINISHED') }}</h4>
+                        <p>Pedido finalizado</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Info -->
+        <div class="info-section ion-padding" *ngIf="order.paymentSimulation">
+            <h3>Información de Pago</h3>
+            <ion-card>
+                <ion-card-content>
+                    <div class="info-row">
+                        <span>Método:</span>
+                        <strong>{{ order.paymentSimulation.method }}</strong>
+                    </div>
+                    <div class="info-row">
+                        <span>Estado:</span>
+                        <ion-badge color="success">Pagado</ion-badge>
+                    </div>
+                    <div class="info-row" *ngIf="order.paymentSimulation.transactionId">
+                        <span>ID Transacción:</span>
+                        <code>{{ order.paymentSimulation.transactionId }}</code>
+                    </div>
+                </ion-card-content>
+            </ion-card>
+        </div>
+    </div>
+
+    <div class="loading-container" *ngIf="isLoading">
+        <ion-spinner name="crescent"></ion-spinner>
+    </div>
+</ion-content>

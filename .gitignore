@@ -8,6 +8,7 @@
 
 # Node
 /node_modules
+node_modules/
 npm-debug.log
 yarn-error.log
 
@@ -40,3 +41,23 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Capacitor
+android/
+ios/
+*.apk
+*.ipa
+
+# Additional logs
+*.log

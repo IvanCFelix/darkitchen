@@ -1,0 +1,96 @@
+.section {
+  margin-bottom: 32px;
+
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--ion-text-color);
+  }
+
+  ion-item {
+    --background: var(--ion-card-background, #fff);
+    --border-radius: 8px;
+    margin-bottom: 4px;
+    --color: var(--ion-text-color);
+
+    &.ion-invalid.ion-touched {
+      --border-color: var(--ion-color-danger);
+      --highlight-color-focused: var(--ion-color-danger);
+    }
+
+    ion-input,
+    ion-textarea {
+      --color: var(--ion-text-color);
+      --placeholder-color: var(--ion-color-step-600);
+    }
+  }
+
+  .error-text {
+    display: block;
+    padding-left: 16px;
+    margin-top: 4px;
+    margin-bottom: 12px;
+    font-size: 12px;
+
+    small {
+      display: block;
+    }
+  }
+
+  .helper-text {
+    display: block;
+    padding-left: 16px;
+    margin-top: 4px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    color: var(--ion-color-step-600);
+  }
+
+  ion-radio-group {
+    ion-item {
+      --background: var(--ion-card-background, #fff);
+      margin-bottom: 8px;
+
+      ion-radio {
+        --color: var(--ion-text-color);
+        --color-checked: var(--gold);
+      }
+    }
+  }
+
+  .address-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 12px;
+
+    &:has(.street-item) {
+      grid-template-columns: 2fr 1fr;
+    }
+
+    ion-item {
+      margin-bottom: 12px;
+    }
+  }
+}
+.submit-button {
+  margin-top: 24px;
+  --background: var(--gold);
+  --color: #000;
+  font-weight: 600;
+}
+
+.expiration-notice {
+  text-align: center;
+  color: var(--ion-color-medium);
+  font-size: 13px;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  ion-icon {
+    font-size: 18px;
+  }
+}

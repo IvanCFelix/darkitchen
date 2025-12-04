@@ -1,0 +1,16 @@
+{
+  "name": "darkitchen-scripts",
+  "version": "1.0.0",
+  "description": "Scripts para poblar datos de ejemplo en DarKitchen",
+  "scripts": {
+    "seed:dishes": "ts-node seed-dishes.ts"
+  },
+  "dependencies": {
+    "firebase": "^11.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}

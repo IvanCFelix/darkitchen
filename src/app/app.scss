@@ -1,0 +1,76 @@
+// Bottom Navigation Bar
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 65px;
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 20px;
+  padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  border-top: 2px solid var(--gold);
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+
+    ion-icon {
+      font-size: 24px;
+      color: rgba(212, 175, 55, 0.6);
+      transition: all 0.3s ease;
+    }
+
+    &:active:not(.center-button) {
+      transform: scale(0.9);
+    }
+
+    &:hover:not(.center-button) ion-icon {
+      color: var(--gold);
+    }
+
+    &.center-button {
+      margin-top: -35px;
+
+      .fab-circle {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--gold) 0%, #c9a633 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+        ion-icon {
+          font-size: 28px;
+          color: #000000;
+        }
+      }
+
+      &:active .fab-circle {
+        transform: scale(0.92);
+        box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+      }
+
+      &:hover .fab-circle {
+        transform: scale(1.05);
+        box-shadow: 0 8px 24px rgba(212, 175, 55, 0.6);
+      }
+    }
+  }
+}
+
+// Add padding to content to avoid overlap with bottom nav
+ion-content {
+  --padding-bottom: 80px;
+}

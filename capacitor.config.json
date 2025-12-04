@@ -1,0 +1,8 @@
+{
+  "appId": "io.darkitchen.app",
+  "appName": "DarKitchen",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}
